@@ -49,3 +49,6 @@ next-env.d.ts
 tmp-*.html
 data.html
 newdata.html
+
+# local agent tooling
+/.agents/
