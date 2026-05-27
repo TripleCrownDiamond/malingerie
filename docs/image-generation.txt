@@ -1,0 +1,91 @@
+GPT Image 2
+Modèle image nouvelle génération avec meilleure compréhension des prompts et formats variés.
+
+Endpoint
+POST /v1/images
+Prix
+$0.009 à $0.200 par image
+Tags
+new
+generation
+edit
+Idéal pour
+Production visuelle
+Images produit
+Storyboard vidéo
+Endpoint
+https://build.lewisnote.com/v1/images
+Paramètres
+Nom	Type	Requis	Description
+prompt	string	Requis	Description de l'image.
+size	string	Optionnel	1024x1024, 1280x720, 720x1280, 1536x1024, 1024x1536.
+quality	string	Optionnel	low, medium ou high.
+cURL
+Copier
+curl https://build.lewisnote.com/v1/images \
+  -H "Authorization: Bearer sk-afri-..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-2",
+    "prompt": "Clean product photo of a handmade bag on white background",
+    "size": "1536x1024",
+    "quality": "medium"
+  }'
+
+A
+Build with AFRI
+Plateforme IA pour apprendre, tester et produire avec les meilleurs modèles.
+Accueil
+Dashboard
+Docs
+Formation
+FR
+EN
+Déconnexion
+Retour à la documentation
+Aperçu
+Idéal pour
+Paramètres
+Exemples
+image
+FLUX.2 Klein
+Génération et édition rapide via Cloudflare Workers AI, idéale pour prévisualisations et workflows interactifs.
+
+Endpoint
+POST /v1/images/flux
+Prix
+$0.02 par image
+Tags
+fast
+cloudflare ai
+edit
+Idéal pour
+Prévisualisations rapides
+Itérations créatives
+Édition légère
+Endpoint
+https://build.lewisnote.com/v1/images/flux
+Paramètres
+Nom	Type	Requis	Description
+prompt	string	Requis	Prompt image.
+width	number	Optionnel	Largeur, maximum 1024.
+height	number	Optionnel	Hauteur, maximum 1024.
+steps	number	Optionnel	Nombre d’étapes, 4 à 50.
+image	string	Optionnel	Image base64 pour édition.
+cURL
+Copier
+curl https://build.lewisnote.com/v1/images/flux \
+  -H "Authorization: Bearer sk-afri-..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A futuristic city at night",
+    "width": 1024,
+    "height": 1024,
+    "steps": 25
+  }'
+Build with AFRI
+FLUX.2 Klein - Build with AFRI
+
+et
+
+sk-afri-8e2e8a2004e74284a19750ae3b2d8b21

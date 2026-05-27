@@ -1,0 +1,131 @@
+﻿User-agent: Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)
+Disallow: /*
+
+User-agent: yandex
+Disallow: *
+
+User-agent: gecko
+Disallow: *
+
+# To block SemrushBot from crawling your site for a webgraph of links
+User-agent: SemrushBot
+Disallow: /
+
+#To block SemrushBot from crawling your site for different SEO and technical issues:
+User-agent: SiteAuditBot
+Disallow: /
+
+#To block SemrushBot from crawling your site for Backlink Audit tool:
+User-agent: SemrushBot-BA
+Disallow: /
+
+#To block SemrushBot from crawling your site for On Page SEO Checker tool and similar tools:
+User-agent: SemrushBot-SI
+Disallow: /
+
+#To block SemrushBot from checking URLs on your site for SWA tool:
+User-agent: SemrushBot-SWA
+Disallow: /
+
+# To block SplitSignalBot from crawling your site for SplitSignal tool:
+User-agent: SplitSignalBot
+Disallow: /
+
+#To block SemrushBot-OCOB from crawling your site for ContentShake AI tool:
+User-agent: SemrushBot-OCOB
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+
+# CVS, SVN directory and dump files
+Disallow: /*.csv
+Disallow: /*.zip$
+Disallow: /*.svn$
+Disallow: /*.idea$
+Disallow: /*.sql$
+Disallow: /*.tgz$
+
+# Directories
+Disallow: /app/
+Disallow: /bin/
+Disallow: /dev/
+Disallow: /lib/
+Disallow: /phpserver/
+Disallow: /pkginfo/
+Disallow: /report/
+Disallow: /setup/
+Disallow: /update/
+Disallow: /var/
+Disallow: /vendor/
+
+# Paths (clean URLs)
+Disallow: /*/index.php/
+Disallow: /*/catalog/product_compare/
+Disallow: /*/catalog/category/view/
+Disallow: /*/catalog/product/view/
+Disallow: /*/catalogsearch/
+Disallow: /*/checkout/
+Disallow: /*/control/
+Disallow: /*/contacts/
+Disallow: /*/customer/
+Disallow: /*/customize/
+Disallow: /*/newsletter/
+Disallow: /*/review/
+Disallow: /*/sendfriend/
+Disallow: /*/wishlist/
+Disallow: /*/home$
+Disallow: /*/home?*
+
+# Files
+Disallow: /composer.json
+Disallow: /composer.lock
+Disallow: /CONTRIBUTING.md
+Disallow: /CONTRIBUTOR_LICENSE_AGREEMENT.html
+Disallow: /COPYING.txt
+Disallow: /Gruntfile.js
+Disallow: /LICENSE.txt
+Disallow: /LICENSE_AFL.txt
+Disallow: /nginx.conf.sample
+Disallow: /package.json
+Disallow: /php.ini.sample
+Disallow: /RELEASE_NOTES.txt
+
+# Do not index pages that are sorted or filtered.
+Disallow: /*?*product_list_mode=
+Disallow: /*?*product_list_order=
+Disallow: /*?*product_list_limit=
+Disallow: /*?*product_list_dir=
+Disallow: /*?*price=
+Disallow: /*?*p=
+Disallow: /*?*product_list_mode=
+Allow: /*?*page=
+Disallow: /*?*q=
+Disallow: /*?*cat=
+
+# Do not index session ID
+Disallow: /*?SID=
+Disallow: /*?
+Disallow: /*?*
+Disallow: /*.php$
+
+Allow: /media/*.css
+Allow: /media/*.CSS
+Allow: /media/*.js
+Allow: /media/*.png
+Allow: /media/*.gif
+Allow: /media/*.jpg
+Allow: /media/*.jpeg
+Allow: /media/*.svg
+
+Allow: /skin/*.css
+Allow: /skin/*.js
+Allow: /skin/*.png
+Allow: /skin/*.gif
+Allow: /skin/*.jpg
+Allow: /skin/*.jpeg
+Allow: /skin/*.svg
+Sitemap: https://www.espaceplaisir.fr/media/sitemap/sitemap_ep.xml
+Sitemap: https://www.espaceplaisir.fr/media/sitemap/sitemap_image.xml
+

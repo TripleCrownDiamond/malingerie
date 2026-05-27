@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "beneficiary": "MA PETITE LINGERIE SAS",
+  "iban": "FR76 3000 4000 5000 6000 7000 891",
+  "bic": "BNPAFRPPXXX",
+  "bankName": "BNP Paribas",
+  "referencePrefix": "MPL",
+  "paymentWindowHours": 72,
+  "instructions": "Indiquez la reference de commande dans le motif de virement."
+}

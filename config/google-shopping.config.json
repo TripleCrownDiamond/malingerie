@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "currency": "EUR",
+  "country": "FR",
+  "language": "fr",
+  "brand": "Ma Petite Lingerie",
+  "condition": "new",
+  "defaultGoogleProductCategory": "1604",
+  "shipping": {
+    "country": "FR",
+    "service": "Standard",
+    "price": 7.9
+  }
+}

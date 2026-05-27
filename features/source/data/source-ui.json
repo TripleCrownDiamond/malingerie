@@ -1,0 +1,206 @@
+{
+  "sourceHost": "https://www.maisonlejaby.com + https://www.espaceplaisir.fr",
+  "generatedAt": "2026-05-26T22:42:18.812Z",
+  "menuLinks": [
+    {
+      "label": "Promotions",
+      "slug": "promotions",
+      "href": "/catalogue?categorie=promotions",
+      "sourceUrl": "https://www.espaceplaisir.fr/1103-promotions"
+    },
+    {
+      "label": "Plaisir",
+      "slug": "sextoys",
+      "href": "/catalogue?categorie=sextoys",
+      "sourceUrl": "https://www.espaceplaisir.fr/939-sextoys"
+    },
+    {
+      "label": "Lingerie",
+      "slug": "lingerie",
+      "href": "/catalogue?categorie=lingerie",
+      "sourceUrl": "https://www.maisonlejaby.com/fr-bj/collections/lingerie"
+    },
+    {
+      "label": "BDSM",
+      "slug": "bdsm",
+      "href": "/catalogue?categorie=bdsm",
+      "sourceUrl": "https://www.espaceplaisir.fr/1189-bdsm"
+    },
+    {
+      "label": "Bien-etre",
+      "slug": "bien-etre",
+      "href": "/catalogue?categorie=bien-etre",
+      "sourceUrl": "https://www.espaceplaisir.fr/991-bien-etre"
+    },
+    {
+      "label": "Aphrodisiaques",
+      "slug": "aphrodisiaques",
+      "href": "/catalogue?categorie=aphrodisiaques",
+      "sourceUrl": "https://www.espaceplaisir.fr/1267-aphrodisiaques"
+    },
+    {
+      "label": "Jeux et librairie",
+      "slug": "jeux-et-librairie",
+      "href": "/catalogue?categorie=jeux-et-librairie",
+      "sourceUrl": "https://www.espaceplaisir.fr/1349-jeux-et-librairie"
+    },
+    {
+      "label": "Marques",
+      "slug": "marques",
+      "href": "/catalogue?categorie=marques",
+      "sourceUrl": "https://www.espaceplaisir.fr/marques"
+    },
+    {
+      "label": "Conseils",
+      "slug": "conseils",
+      "href": "/#conseils",
+      "sourceUrl": "https://www.espaceplaisir.fr/conseils"
+    }
+  ],
+  "featuredCategories": [
+    {
+      "id": "source-featured-1",
+      "label": "Lingerie",
+      "slug": "lingerie",
+      "href": "/catalogue?categorie=lingerie",
+      "sourceUrl": "https://www.maisonlejaby.com/fr-bj/collections/lingerie",
+      "image": "https://www.maisonlejaby.com/cdn/shop/files/Carte-cadeau-fiche-produit-1128x1690-img2.jpg?v=1733303569&width=1128",
+      "featured": true
+    },
+    {
+      "id": "source-featured-2",
+      "label": "Plaisir",
+      "slug": "sextoys",
+      "href": "/catalogue?categorie=sextoys",
+      "sourceUrl": "https://www.espaceplaisir.fr/939-sextoys",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/9/7/979-98887-thickbox.jpg?quality=80&fit=bounds&height=&width=",
+      "featured": false
+    },
+    {
+      "id": "source-featured-3",
+      "label": "Bien-etre",
+      "slug": "bien-etre",
+      "href": "/catalogue?categorie=bien-etre",
+      "sourceUrl": "https://www.espaceplaisir.fr/991-bien-etre",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/9/5/957-60759-thickbox.jpg?quality=80&fit=bounds&height=&width=",
+      "featured": false
+    },
+    {
+      "id": "source-featured-4",
+      "label": "BDSM",
+      "slug": "bdsm",
+      "href": "/catalogue?categorie=bdsm",
+      "sourceUrl": "https://www.espaceplaisir.fr/1189-bdsm",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/7/7/779-114023-thickbox.jpg?quality=80&fit=bounds&height=&width=",
+      "featured": false
+    },
+    {
+      "id": "source-featured-5",
+      "label": "Aphrodisiaques",
+      "slug": "aphrodisiaques",
+      "href": "/catalogue?categorie=aphrodisiaques",
+      "sourceUrl": "https://www.espaceplaisir.fr/1267-aphrodisiaques",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/4/0/40168_a26067_grey_000.jpg?quality=80&fit=bounds&height=&width=",
+      "featured": false
+    },
+    {
+      "id": "source-featured-6",
+      "label": "Jeux et librairie",
+      "slug": "jeux-et-librairie",
+      "href": "/catalogue?categorie=jeux-et-librairie",
+      "sourceUrl": "https://www.espaceplaisir.fr/1349-jeux-et-librairie",
+      "image": "https://www.maisonlejaby.com/cdn/shop/files/E12233_E12266_245.-12.jpg?v=1736517872&width=1500",
+      "featured": false
+    },
+    {
+      "id": "source-featured-7",
+      "label": "Promotions",
+      "slug": "promotions",
+      "href": "/catalogue?categorie=promotions",
+      "sourceUrl": "https://www.espaceplaisir.fr/1103-promotions",
+      "image": "/hero-slide-01-lingerie-custom.webp",
+      "featured": false
+    }
+  ],
+  "promoBanners": [
+    {
+      "label": "Lingerie premium importee de nos sources",
+      "ctaLabel": "Explorer",
+      "href": "/catalogue?categorie=lingerie",
+      "sourceUrl": "https://www.maisonlejaby.com/fr-bj/collections/lingerie",
+      "image": "https://www.maisonlejaby.com/cdn/shop/files/Carte-cadeau-fiche-produit-1128x1690-img2.jpg?v=1733303569&width=1128"
+    },
+    {
+      "label": "Plaisir premium importee de nos sources",
+      "ctaLabel": "Explorer",
+      "href": "/catalogue?categorie=sextoys",
+      "sourceUrl": "https://www.espaceplaisir.fr/939-sextoys",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/9/7/979-98887-thickbox.jpg?quality=80&fit=bounds&height=&width="
+    },
+    {
+      "label": "Bien-etre premium importee de nos sources",
+      "ctaLabel": "Explorer",
+      "href": "/catalogue?categorie=bien-etre",
+      "sourceUrl": "https://www.espaceplaisir.fr/991-bien-etre",
+      "image": "https://www.espaceplaisir.fr/media/catalog/product/9/5/957-60759-thickbox.jpg?quality=80&fit=bounds&height=&width="
+    }
+  ],
+  "storyHighlights": [
+    {
+      "title": "Notre mission",
+      "description": "Rendre le bien-etre intime plus accessible avec une selection premium, de la lingerie elegante aux univers plaisir."
+    },
+    {
+      "title": "Nos engagements",
+      "description": "Qualite, information claire et discretion totale pour accompagner chaque commande avec confiance."
+    },
+    {
+      "title": "Notre approche",
+      "description": "Un ton pedagogique et respectueux, sans jugement, pour permettre a chacun d'avancer a son rythme."
+    }
+  ],
+  "footerShopLinks": [
+    {
+      "label": "Plaisir",
+      "slug": "sextoys",
+      "href": "/catalogue?categorie=sextoys",
+      "sourceUrl": "https://www.espaceplaisir.fr/939-sextoys"
+    },
+    {
+      "label": "Lingerie",
+      "slug": "lingerie",
+      "href": "/catalogue?categorie=lingerie",
+      "sourceUrl": "https://www.maisonlejaby.com/fr-bj/collections/lingerie"
+    },
+    {
+      "label": "BDSM",
+      "slug": "bdsm",
+      "href": "/catalogue?categorie=bdsm",
+      "sourceUrl": "https://www.espaceplaisir.fr/1189-bdsm"
+    },
+    {
+      "label": "Bien-etre",
+      "slug": "bien-etre",
+      "href": "/catalogue?categorie=bien-etre",
+      "sourceUrl": "https://www.espaceplaisir.fr/991-bien-etre"
+    },
+    {
+      "label": "Aphrodisiaques",
+      "slug": "aphrodisiaques",
+      "href": "/catalogue?categorie=aphrodisiaques",
+      "sourceUrl": "https://www.espaceplaisir.fr/1267-aphrodisiaques"
+    },
+    {
+      "label": "Jeux et librairie",
+      "slug": "jeux-et-librairie",
+      "href": "/catalogue?categorie=jeux-et-librairie",
+      "sourceUrl": "https://www.espaceplaisir.fr/1349-jeux-et-librairie"
+    },
+    {
+      "label": "Marques",
+      "slug": "marques",
+      "href": "/catalogue?categorie=marques",
+      "sourceUrl": "https://www.espaceplaisir.fr/marques"
+    }
+  ]
+}

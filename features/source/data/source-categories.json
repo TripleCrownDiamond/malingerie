@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cat-promotions",
+    "name": "Promotions",
+    "slug": "promotions",
+    "description": "Offres en cours et selections a prix doux issues des catalogues source."
+  },
+  {
+    "id": "cat-sextoys",
+    "name": "Plaisir",
+    "slug": "sextoys",
+    "description": "Selections de produits intimes inspires des catalogues source."
+  },
+  {
+    "id": "cat-lingerie",
+    "name": "Lingerie",
+    "slug": "lingerie",
+    "description": "Pieces lingerie et nightwear issues des univers references."
+  },
+  {
+    "id": "cat-bdsm",
+    "name": "BDSM",
+    "slug": "bdsm",
+    "description": "Accessoires et univers BDSM inspires des rayons source."
+  },
+  {
+    "id": "cat-bien-etre",
+    "name": "Bien-etre",
+    "slug": "bien-etre",
+    "description": "Produits de bien-etre intime et routines sensorielles."
+  },
+  {
+    "id": "cat-aphrodisiaques",
+    "name": "Aphrodisiaques",
+    "slug": "aphrodisiaques",
+    "description": "Complements et produits de stimulation du desir."
+  },
+  {
+    "id": "cat-jeux-et-librairie",
+    "name": "Jeux et librairie",
+    "slug": "jeux-et-librairie",
+    "description": "Jeux coquins, coffrets et lectures de decouverte."
+  },
+  {
+    "id": "cat-marques",
+    "name": "Marques",
+    "slug": "marques",
+    "description": "Selection multi-marques et references populaires des sources."
+  },
+  {
+    "id": "cat-conseils",
+    "name": "Conseils",
+    "slug": "conseils",
+    "description": "Guides et contenus d'accompagnement pour bien choisir."
+  }
+]
