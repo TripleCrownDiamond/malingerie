@@ -21,7 +21,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { type FormEvent, useState, useSyncExternalStore, useTransition } from "react";
 
 import { useCartStore } from "@/features/cart/store/cart-store";
@@ -47,6 +47,7 @@ function getCategoryIcon(slug: string) {
 
 export function SiteHeader() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,6 +66,13 @@ export function SiteHeader() {
   const safeCartCount = isClientReady ? cartCount : 0;
   const safeWishlistCount = isClientReady ? wishlistCount : 0;
 
+  function isMenuItemActive(slug: string, href: string) {
+    const currentPath = pathname.replace(/\/$/, "") || "/";
+    const hrefPath = href.split("?")[0].replace(/\/$/, "") || "/";
+    const categoryPagePath = `/${slug}`;
+
+    return currentPath === hrefPath || currentPath === categoryPagePath;
+  }
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const query = searchQuery.trim();
@@ -173,12 +181,18 @@ export function SiteHeader() {
               const Icon = getCategoryIcon(item.slug);
 
               const resolvedHref = resolveSourceMenuHref(item.slug, item.href);
+              const isActive = isMenuItemActive(item.slug, resolvedHref);
 
               return (
                 <Link
                   key={item.slug}
                   href={resolvedHref}
-                  className="nav-link relative inline-flex items-center gap-2 py-1 text-gray-700 transition hover:text-[var(--accent)]"
+                  aria-current={isActive ? "page" : undefined}
+                  className={`nav-link relative inline-flex items-center gap-2 rounded-full px-3 py-2 transition ${
+                    isActive
+                      ? "bg-[var(--accent-soft)] text-[var(--accent-strong)] shadow-sm shadow-rose-100"
+                      : "text-gray-700 hover:text-[var(--accent)]"
+                  }`}
                 >
                   <Icon size={14} />
                   <span>{item.label}</span>
@@ -269,9 +283,18 @@ export function SiteHeader() {
                 const Icon = getCategoryIcon(item.slug);
 
                 const resolvedHref = resolveSourceMenuHref(item.slug, item.href);
+                const isActive = isMenuItemActive(item.slug, resolvedHref);
 
                 return (
-                  <Link key={`mobile-${item.slug}`} href={resolvedHref} onClick={() => setMobileOpen(false)} className="inline-flex items-center gap-2">
+                  <Link
+                    key={`mobile-${item.slug}`}
+                    href={resolvedHref}
+                    onClick={() => setMobileOpen(false)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`inline-flex items-center gap-2 rounded-2xl px-3 py-2 transition ${
+                      isActive ? "bg-[var(--accent-soft)] text-[var(--accent-strong)]" : "hover:text-[var(--accent)]"
+                    }`}
+                  >
                     <Icon size={14} />
                     <span>{item.label}</span>
                   </Link>

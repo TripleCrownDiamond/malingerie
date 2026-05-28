@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const shopLinks = [
   { label: "Lingerie", href: "/lingerie" },
@@ -26,7 +29,26 @@ const maisonLinks = [
   { label: "Cookies", href: "/politique-cookies" },
 ];
 
+function isFooterLinkActive(pathname: string, href: string) {
+  const currentPath = pathname.replace(/\/$/, "") || "/";
+  const hrefPath = href.replace(/\/$/, "") || "/";
+
+  if (hrefPath === "/") {
+    return currentPath === "/";
+  }
+
+  return currentPath === hrefPath || currentPath.startsWith(`${hrefPath}/`);
+}
+
+function footerLinkClass(isActive: boolean) {
+  return isActive
+    ? "inline-flex rounded-full bg-white/80 px-3 py-1 text-[var(--accent-strong)] shadow-sm shadow-rose-200"
+    : "inline-flex rounded-full px-3 py-1 hover:text-[var(--accent)]";
+}
+
 export function SiteFooter() {
+  const pathname = usePathname();
+
   return (
     <footer className="relative bg-[var(--rose-nude)] px-8 pb-16 pt-24 lg:pt-32" id="conseils">
       <div className="mx-auto max-w-[1600px]">
@@ -59,7 +81,11 @@ export function SiteFooter() {
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
               {shopLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                  <Link
+                    href={item.href}
+                    aria-current={isFooterLinkActive(pathname, item.href) ? "page" : undefined}
+                    className={footerLinkClass(isFooterLinkActive(pathname, item.href))}
+                  >
                     {item.label}
                   </Link>
                 </li>
@@ -72,7 +98,11 @@ export function SiteFooter() {
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
               {assistanceLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                  <Link
+                    href={item.href}
+                    aria-current={isFooterLinkActive(pathname, item.href) ? "page" : undefined}
+                    className={footerLinkClass(isFooterLinkActive(pathname, item.href))}
+                  >
                     {item.label}
                   </Link>
                 </li>
@@ -85,7 +115,11 @@ export function SiteFooter() {
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
               {maisonLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                  <Link
+                    href={item.href}
+                    aria-current={isFooterLinkActive(pathname, item.href) ? "page" : undefined}
+                    className={footerLinkClass(isFooterLinkActive(pathname, item.href))}
+                  >
                     {item.label}
                   </Link>
                 </li>
