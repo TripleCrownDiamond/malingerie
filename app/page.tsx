@@ -156,7 +156,7 @@ export default async function HomePage() {
           <div className="mb-16 flex flex-col items-start justify-between gap-8 lg:mb-20 lg:flex-row lg:items-end">
             <div className="max-w-2xl">
               <h2 className="font-display mb-6 text-5xl text-rose-900">Selection du catalogue</h2>
-              <p className="text-lg italic uppercase tracking-[0.22em] text-gray-500">Lingerie et plaisir arrivent en tete, avant les autres univers.</p>
+              <p className="text-lg italic uppercase tracking-[0.22em] text-gray-500">Lingerie et plaisir en priorite, avant de decouvrir nos autres univers.</p>
             </div>
             <Link
               href="/catalogue"
