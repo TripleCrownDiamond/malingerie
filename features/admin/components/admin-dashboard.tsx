@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 
 import { categories } from "@/features/catalog/data/categories";
@@ -170,6 +171,15 @@ function formatCurrency(value: number) {
     currency: "EUR",
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+function imageFileName(url: string) {
+  try {
+    const parsed = new URL(url);
+    return parsed.pathname.split("/").filter(Boolean).at(-1) ?? "image produit";
+  } catch {
+    return "image produit";
+  }
 }
 
 function productToDraft(product: Product): ProductDraft {
@@ -896,18 +906,40 @@ export function AdminDashboard() {
 
                 <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Description courte *</span><input value={draft.shortDescription} onChange={(event) => setDraft((prev) => ({ ...prev, shortDescription: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" required /></label>
                 <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Description longue *</span><textarea value={draft.longDescription} onChange={(event) => setDraft((prev) => ({ ...prev, longDescription: event.target.value }))} rows={4} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" required /></label>
-                <label className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
-                  <span>Image principale *</span>
-                  <input type="file" accept="image/*" onChange={(event) => uploadMainProductImage(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
-                  {draft.image ? <p className="break-all rounded-xl bg-rose-50 px-4 py-3 text-xs text-[var(--muted)]">Image Cloudinary: {draft.image}</p> : null}
+                <div className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
+                  <label className="space-y-3">
+                    <span>Image principale *</span>
+                    <input type="file" accept="image/*" onChange={(event) => uploadMainProductImage(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
+                  </label>
+                  {draft.image ? (
+                    <div className="rounded-2xl border border-[var(--line)] bg-white p-3">
+                      <div className="relative aspect-[4/3] max-w-sm overflow-hidden rounded-xl bg-rose-50">
+                        <Image src={draft.image} alt="Apercu image principale" fill className="object-cover" sizes="384px" />
+                      </div>
+                      <p className="mt-2 truncate text-xs text-[var(--muted)]" title={draft.image}>Image principale: {imageFileName(draft.image)}</p>
+                    </div>
+                  ) : null}
                   {isUploadingMainImage ? <p className="text-xs uppercase tracking-[0.16em] text-[var(--accent)]">Upload en cours...</p> : null}
-                </label>
-                <label className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
-                  <span>Galerie produit</span>
-                  <input type="file" accept="image/*" multiple onChange={(event) => uploadGalleryProductImages(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
-                  {draft.gallery ? <p className="break-all rounded-xl bg-rose-50 px-4 py-3 text-xs text-[var(--muted)]">Galerie Cloudinary: {draft.gallery}</p> : null}
+                </div>
+                <div className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
+                  <label className="space-y-3">
+                    <span>Galerie produit</span>
+                    <input type="file" accept="image/*" multiple onChange={(event) => uploadGalleryProductImages(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
+                  </label>
+                  {splitCsv(draft.gallery).length > 0 ? (
+                    <div className="grid gap-3 rounded-2xl border border-[var(--line)] bg-white p-3 sm:grid-cols-2 lg:grid-cols-4">
+                      {splitCsv(draft.gallery).map((imageUrl) => (
+                        <div key={imageUrl} className="space-y-2">
+                          <div className="relative aspect-square overflow-hidden rounded-xl bg-rose-50">
+                            <Image src={imageUrl} alt="Apercu galerie produit" fill className="object-cover" sizes="180px" />
+                          </div>
+                          <p className="truncate text-[11px] text-[var(--muted)]" title={imageUrl}>{imageFileName(imageUrl)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                   {isUploadingGalleryImages ? <p className="text-xs uppercase tracking-[0.16em] text-[var(--accent)]">Upload galerie en cours...</p> : null}
-                </label>
+                </div>
 
                 <label className="space-y-2 text-sm text-[var(--muted)]"><span>Tags (virgule)</span><input value={draft.tags} onChange={(event) => setDraft((prev) => ({ ...prev, tags: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
                 <label className="space-y-2 text-sm text-[var(--muted)]"><span>SKU</span><input value={draft.sku} onChange={(event) => setDraft((prev) => ({ ...prev, sku: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
