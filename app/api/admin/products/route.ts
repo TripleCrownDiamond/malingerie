@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getRequiredAdminUserId } from "@/lib/server/admin-auth";
 import { readSourceProducts, writeSourceProducts } from "@/lib/server/config-store";
 import type { Product } from "@/types/shop";
 
-const createProductSchema = z.object({
+const productPayloadSchema = z.object({
   name: z.string().min(2),
   slug: z.string().optional(),
   categorySlug: z.string().min(2),
@@ -30,6 +30,10 @@ const createProductSchema = z.object({
       }),
     )
     .default([]),
+});
+
+const updateProductSchema = productPayloadSchema.extend({
+  id: z.string().min(1),
 });
 
 function toSlug(value: string) {
@@ -77,12 +81,20 @@ function buildSearchIndex(product: Product) {
     .toLowerCase();
 }
 
-export async function GET(request: Request) {
+async function requireAdmin() {
   try {
     await getRequiredAdminUserId();
+    return null;
   } catch (error) {
     const code = error instanceof Error && error.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: "Acces admin requis" }, { status: code });
+  }
+}
+
+export async function GET(request: Request) {
+  const adminError = await requireAdmin();
+  if (adminError) {
+    return adminError;
   }
 
   const url = new URL(request.url);
@@ -144,16 +156,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  try {
-    await getRequiredAdminUserId();
-  } catch (error) {
-    const code = error instanceof Error && error.message === "FORBIDDEN" ? 403 : 401;
-    return NextResponse.json({ ok: false, error: "Acces admin requis" }, { status: code });
+  const adminError = await requireAdmin();
+  if (adminError) {
+    return adminError;
   }
 
   try {
     const body = await request.json();
-    const payload = createProductSchema.parse(body);
+    const payload = productPayloadSchema.parse(body);
 
     const products = await readSourceProducts();
 
@@ -212,5 +222,72 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ok: false, error: "Impossible d'ajouter le produit" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  const adminError = await requireAdmin();
+  if (adminError) {
+    return adminError;
+  }
+
+  try {
+    const body = await request.json();
+    const payload = updateProductSchema.parse(body);
+
+    const products = await readSourceProducts();
+    const productIndex = products.findIndex((product) => product.id === payload.id);
+
+    if (productIndex === -1) {
+      return NextResponse.json({ ok: false, error: "Produit introuvable" }, { status: 404 });
+    }
+
+    const currentProduct = products[productIndex];
+    const existingSlugs = new Set(
+      products
+        .filter((product) => product.id !== payload.id)
+        .map((product) => product.slug),
+    );
+    const baseSlug = toSlug(payload.slug?.trim() || payload.name);
+    const finalSlug = ensureUniqueSlug(baseSlug, existingSlugs);
+
+    const updatedProduct: Product = {
+      ...currentProduct,
+      name: payload.name.trim(),
+      slug: finalSlug,
+      categorySlug: payload.categorySlug.trim(),
+      subcategorySlug: payload.subcategorySlug?.trim() || undefined,
+      subcategoryLabel: payload.subcategoryLabel?.trim() || undefined,
+      shortDescription: payload.shortDescription.trim(),
+      longDescription: payload.longDescription.trim(),
+      price: payload.price,
+      compareAtPrice: payload.compareAtPrice,
+      tags: payload.tags,
+      colors: payload.colors.length > 0 ? payload.colors : ["Unique"],
+      sizes: payload.sizes.length > 0 ? payload.sizes : ["TU"],
+      stock: payload.stock,
+      sku: payload.sku?.trim() || currentProduct.sku,
+      image: payload.image,
+      gallery: payload.gallery.length > 0 ? payload.gallery : [payload.image],
+      specifications: payload.specifications,
+    };
+
+    products[productIndex] = updatedProduct;
+    await writeSourceProducts(products);
+
+    return NextResponse.json({ ok: true, product: updatedProduct });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Payload produit invalide",
+          details: error.issues,
+        },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json({ ok: false, error: "Impossible de modifier le produit" }, { status: 500 });
   }
 }

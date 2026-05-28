@@ -66,7 +66,7 @@ type AdminOrdersResponse = {
 };
 
 type AdminMenu = "products" | "orders" | "bank" | "google";
-type ProductPanel = "list" | "create";
+type ProductPanel = "list" | "create" | "edit";
 
 const defaultPagination: Pagination = {
   page: 1,
@@ -163,6 +163,27 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
+function productToDraft(product: Product): ProductDraft {
+  return {
+    name: product.name,
+    slug: product.slug,
+    categorySlug: product.categorySlug,
+    subcategorySlug: product.subcategorySlug ?? "",
+    subcategoryLabel: product.subcategoryLabel ?? "",
+    shortDescription: product.shortDescription,
+    longDescription: product.longDescription,
+    price: String(product.price),
+    compareAtPrice: product.compareAtPrice ? String(product.compareAtPrice) : "",
+    tags: product.tags.join(", "),
+    image: product.image,
+    gallery: product.gallery.join(", "),
+    sku: product.sku,
+    stock: String(product.stock),
+    colors: product.colors.join(", "),
+    sizes: product.sizes.join(", "),
+  };
+}
+
 export function AdminDashboard() {
   const [activeMenu, setActiveMenu] = useState<AdminMenu>("products");
   const [productPanel, setProductPanel] = useState<ProductPanel>("list");
@@ -188,6 +209,7 @@ export function AdminDashboard() {
   const [orderStatusInput, setOrderStatusInput] = useState("all");
 
   const [draft, setDraft] = useState<ProductDraft>(defaultDraft);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
 
   const [isConfigLoading, setIsConfigLoading] = useState(true);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
@@ -376,6 +398,7 @@ export function AdminDashboard() {
 
     try {
       const payload = {
+        id: editingProductId ?? undefined,
         name: draft.name,
         slug: draft.slug || undefined,
         categorySlug: draft.categorySlug,
@@ -396,7 +419,7 @@ export function AdminDashboard() {
       };
 
       const response = await fetch("/api/admin/products", {
-        method: "POST",
+        method: editingProductId ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -404,12 +427,13 @@ export function AdminDashboard() {
       const json = await response.json();
 
       if (!response.ok) {
-        setProductStatus(`Erreur: ${json.error ?? "Impossible d'ajouter le produit"}`);
+        setProductStatus(`Erreur: ${json.error ?? (editingProductId ? "Impossible de modifier le produit" : "Impossible d'ajouter le produit")}`);
         return;
       }
 
-      setProductStatus("Produit ajoute avec succes.");
+      setProductStatus(editingProductId ? "Produit modifie avec succes." : "Produit ajoute avec succes.");
       setDraft(defaultDraft);
+      setEditingProductId(null);
       setProductPanel("list");
       setProductQueryInput("");
       setProductCategoryInput("all");
@@ -478,6 +502,20 @@ export function AdminDashboard() {
     } finally {
       setIsSavingGoogleConfig(false);
     }
+  }
+
+  function startProductEdit(product: Product) {
+    setDraft(productToDraft(product));
+    setEditingProductId(product.id);
+    setProductStatus(null);
+    setProductPanel("edit");
+  }
+
+  function resetProductForm() {
+    setDraft(defaultDraft);
+    setEditingProductId(null);
+    setProductStatus(null);
+    setProductPanel("create");
   }
 
   function submitProductFilters(event: FormEvent<HTMLFormElement>) {
@@ -580,14 +618,14 @@ export function AdminDashboard() {
               </button>
               <button
                 type="button"
-                onClick={() => setProductPanel("create")}
+                onClick={resetProductForm}
                 className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition ${
-                  productPanel === "create"
+                  productPanel === "create" || productPanel === "edit"
                     ? "bg-[var(--accent)] text-white"
                     : "border border-[var(--line)] bg-white text-[var(--muted)] hover:border-[var(--accent)]"
                 }`}
               >
-                Ajouter un produit
+{editingProductId ? "Edition en cours" : "Ajouter un produit"}
               </button>
             </div>
           </div>
@@ -649,18 +687,19 @@ export function AdminDashboard() {
                       <th className="px-2 py-3">Prix</th>
                       <th className="px-2 py-3">Stock</th>
                       <th className="px-2 py-3">SKU</th>
+                      <th className="px-2 py-3">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {isProductsLoading ? (
                       <tr>
-                        <td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={6}>
+                        <td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={7}>
                           Chargement des produits...
                         </td>
                       </tr>
                     ) : productItems.length === 0 ? (
                       <tr>
-                        <td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={6}>
+                        <td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={7}>
                           Aucun produit trouve avec ces filtres.
                         </td>
                       </tr>
@@ -676,6 +715,15 @@ export function AdminDashboard() {
                           <td className="px-2 py-3">{product.price.toFixed(2)} EUR</td>
                           <td className="px-2 py-3">{product.stock}</td>
                           <td className="px-2 py-3">{product.sku}</td>
+                          <td className="px-2 py-3">
+                            <button
+                              type="button"
+                              onClick={() => startProductEdit(product)}
+                              className="rounded-full border border-[var(--line)] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                            >
+                              Modifier
+                            </button>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -720,6 +768,16 @@ export function AdminDashboard() {
             </div>
           ) : (
             <div className="mt-5">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
+                  {editingProductId ? "Modification du produit selectionne" : "Creation d'un nouveau produit"}
+                </p>
+                {editingProductId ? (
+                  <button type="button" onClick={resetProductForm} className="rounded-full border border-[var(--line)] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]">
+                    Annuler edition
+                  </button>
+                ) : null}
+              </div>
               {productStatus ? <p className="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--accent)]">{productStatus}</p> : null}
 
               <form onSubmit={submitProduct} className="grid gap-4 sm:grid-cols-2">
@@ -767,7 +825,7 @@ export function AdminDashboard() {
 
                 <div className="sm:col-span-2">
                   <button type="submit" disabled={isSubmittingProduct} className="rounded-full bg-[var(--ink)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-70">
-                    {isSubmittingProduct ? "Ajout en cours..." : "Ajouter ce produit"}
+                    {isSubmittingProduct ? (editingProductId ? "Modification..." : "Ajout en cours...") : editingProductId ? "Enregistrer les modifications" : "Ajouter ce produit"}
                   </button>
                 </div>
               </form>
