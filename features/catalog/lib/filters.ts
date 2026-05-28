@@ -1,7 +1,7 @@
 import { categories } from "@/features/catalog/data/categories";
-import { products } from "@/features/catalog/data/products";
+import type { Product } from "@/types/shop";
 
-export function searchProducts(search = "", category = "all", subcategory = "all") {
+export function searchProducts(products: Product[], search = "", category = "all", subcategory = "all") {
   const searchTerm = search.trim().toLowerCase();
 
   return products.filter((product) => {

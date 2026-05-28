@@ -56,10 +56,10 @@ export default function CguCgvPage() {
           <section className="space-y-3 border-t border-[var(--line)] pt-6">
             <h2 className="font-display text-3xl text-[var(--ink)]">5. Livraison</h2>
             <p>
-              Les delais de livraison sont donnes a titre indicatif. Un retard raisonnable ne donne pas automatiquement droit a annulation ou indemnisation.
+              Le delai de livraison estime est de 3 a 7 jours ouvres apres validation de la commande et reception du paiement.
             </p>
             <p>
-              Le client doit verifier l&apos;etat du colis a reception et signaler toute anomalie dans les meilleurs delais.
+              Le client doit verifier l&apos;etat du colis a reception et signaler toute anomalie dans un delai maximal de 48h.
             </p>
           </section>
 

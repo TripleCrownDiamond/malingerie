@@ -12,24 +12,32 @@ export default function MentionsLegalesPage() {
           <p className="text-xs uppercase tracking-[0.24em] text-[var(--accent)]">Legal</p>
           <h1 className="font-display text-5xl text-[var(--ink)]">Mentions legales</h1>
           <p className="max-w-3xl text-sm text-[var(--muted)]">
-            Informations legales de l&apos;editeur du site {legalCompanyProfile.brandName} et references societaires basees sur la fiche officielle disponible sur Societe.com.
+            Informations legales de l&apos;editeur du site {legalCompanyProfile.brandName} avec les donnees societaires officielles.
           </p>
         </header>
 
         <LegalLinks currentHref="/mentions-legales" />
 
-        <article className="space-y-6 rounded-3xl border border-[var(--line)] bg-white/90 p-6 sm:p-8 text-[var(--muted)]">
+        <article className="space-y-6 rounded-3xl border border-[var(--line)] bg-white/90 p-6 text-[var(--muted)] sm:p-8">
           <section className="space-y-3">
             <h2 className="font-display text-3xl text-[var(--ink)]">Editeur du site</h2>
             <p>
-              {legalCompanyProfile.legalName} ({legalCompanyProfile.brandName}) - {legalCompanyProfile.legalForm}
+              {legalCompanyProfile.legalName} ({legalCompanyProfile.tradeName}) - {legalCompanyProfile.legalForm}
+            </p>
+            <p>Nom de domaine: {legalCompanyProfile.domain}</p>
+            <p>
+              Site officiel: <a className="underline" href={legalCompanyProfile.website} target="_blank" rel="noreferrer">{legalCompanyProfile.website}</a>
             </p>
             <p>Siege social: {legalCompanyProfile.headOffice}</p>
+            <p>Capital social: {legalCompanyProfile.capitalSocial}</p>
             <p>SIREN: {legalCompanyProfile.siren}</p>
             <p>SIRET (siege): {legalCompanyProfile.siret}</p>
             <p>TVA intracommunautaire: {legalCompanyProfile.vatNumber}</p>
             <p>Code NAF/APE: {legalCompanyProfile.nafCode} - {legalCompanyProfile.nafLabel}</p>
-            <p>Immatriculation: societe active depuis le {legalCompanyProfile.foundedOn}</p>
+            <p>Activite principale declaree: {legalCompanyProfile.activityDeclared}</p>
+            <p>Type d&apos;activite: {legalCompanyProfile.activityType}</p>
+            <p>Convention collective deduite: {legalCompanyProfile.collectiveAgreement}</p>
+            <p>Statut RCS/INSEE/RNE: Inscrite le {legalCompanyProfile.foundedOn}</p>
           </section>
 
           <section className="space-y-3 border-t border-[var(--line)] pt-6">
@@ -66,17 +74,14 @@ export default function MentionsLegalesPage() {
           </section>
 
           <section className="space-y-3 border-t border-[var(--line)] pt-6">
-            <h2 className="font-display text-3xl text-[var(--ink)]">Source des informations societaires</h2>
+            <h2 className="font-display text-3xl text-[var(--ink)]">Sources et mises a jour</h2>
             <p>
-              Les donnees d&apos;identification (SIREN, SIRET, TVA, adresse, dirigeant) sont alignees sur la fiche:
+              Source principale:
               {" "}
               <a className="underline" href={legalCompanyProfile.sourceUrl} target="_blank" rel="noreferrer">{legalCompanyProfile.sourceUrl}</a>
-              {" "}
-              (consultation du {legalCompanyProfile.sourceCheckedOn}).
             </p>
-            <p>
-              En cas de mise a jour officielle, ces informations seront actualisees dans les plus brefs delais.
-            </p>
+            <p>Sources consultees et mises a jour le {legalCompanyProfile.sourceCheckedOn}.</p>
+            <p>Derniere verification interne des pages legales: {legalCompanyProfile.sourceUpdatedOn}.</p>
           </section>
         </article>
 

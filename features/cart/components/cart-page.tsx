@@ -87,7 +87,7 @@ function getPaymentLabel(method: PaymentMethod) {
 }
 
 function getDeliveryLabel(method: DeliveryMethod) {
-  return method === "express" ? "Express 24/48h" : "Standard 2-4 jours";
+  return method === "express" ? "Express 3-7 jours" : "Standard 3-7 jours";
 }
 
 export function CartPage() {
@@ -492,7 +492,7 @@ export function CartPage() {
                       className="mt-1"
                     />
                     <div className="space-y-1 text-sm text-[var(--muted)]">
-                      <p className="font-semibold text-[var(--ink)]">Standard 2-4 jours</p>
+                      <p className="font-semibold text-[var(--ink)]">Standard 3-7 jours</p>
                       <p>Tarif: {subtotal >= 120 ? "Offerte" : "7.90 EUR"}</p>
                     </div>
                   </div>
@@ -508,8 +508,8 @@ export function CartPage() {
                       className="mt-1"
                     />
                     <div className="space-y-1 text-sm text-[var(--muted)]">
-                      <p className="font-semibold text-[var(--ink)]">Express 24/48h</p>
-                      <p>Tarif: 11.90 EUR</p>
+                      <p className="font-semibold text-[var(--ink)]">Express 3-7 jours</p>
+                      <p>Tarif: 11.90 EUR (traitement prioritaire)</p>
                     </div>
                   </div>
                 </label>

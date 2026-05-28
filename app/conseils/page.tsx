@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 
 import { Container } from "@/components/ui/container";
 import { categories } from "@/features/catalog/data/categories";
-import { products } from "@/features/catalog/data/products";
+import { readSourceProducts } from "@/lib/server/config-store";
+import type { Product } from "@/types/shop";
 
 const guideCards = [
   {
@@ -65,7 +67,8 @@ const faqItems = [
 
 const focusCategorySlugs = ["lingerie", "sextoys", "bdsm", "bien-etre", "aphrodisiaques", "jeux-et-librairie"];
 
-const focusCollections = focusCategorySlugs
+function buildFocusCollections(products: Product[]) {
+  return focusCategorySlugs
   .map((slug) => {
     const category = categories.find((item) => item.slug === slug);
     const categoryProducts = products.filter((product) => product.categorySlug === slug).slice(0, 4);
@@ -83,8 +86,12 @@ const focusCollections = focusCategorySlugs
     };
   })
   .filter((item): item is NonNullable<typeof item> => Boolean(item));
+}
 
-export default function ConseilsPage() {
+export default async function ConseilsPage() {
+  noStore();
+  const products = await readSourceProducts();
+  const focusCollections = buildFocusCollections(products);
   return (
     <Container>
       <section className="space-y-10 py-12 sm:py-16">

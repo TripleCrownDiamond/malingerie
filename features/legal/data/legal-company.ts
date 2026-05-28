@@ -1,21 +1,29 @@
 export const legalCompanyProfile = {
   brandName: "Ma Petite Lingerie",
   legalName: "MA P'TITE LINGERIE",
-  legalForm: "SAS (societe par actions simplifiee)",
+  tradeName: "MA P'TITE LINGERIE",
+  legalForm: "Societe par actions simplifiee (SAS)",
+  capitalSocial: "1 000,00 EUR",
   siren: "829 712 561",
   siret: "829 712 561 00028",
   vatNumber: "FR34829712561",
   nafCode: "4771Z",
   nafLabel: "Commerce de detail d'habillement en magasin specialise",
-  foundedOn: "18/05/2017",
+  activityDeclared: "Vente au detail de lingerie, sous-vetements et accessoires",
+  activityType: "Commerciale",
+  collectiveAgreement: "Succursales de vente au detail d'habillement (675)",
+  foundedOn: "18 mai 2017",
   headOffice: "160 avenue Pasteur, 33185 Le Haillan, France",
   publicationDirector: "Valerie PAOLOZZI",
+  domain: "ma-petite-lingerie.com",
+  website: "https://ma-petite-lingerie.com",
   sourceUrl: "https://www.societe.com/societe/ma-p-tite-lingerie-829712561.html",
-  sourceCheckedOn: "27/05/2026",
+  sourceCheckedOn: "25/05/2026",
+  sourceUpdatedOn: "27/05/2026",
 };
 
 export const legalContact = {
-  email: "contact@mapetitelingerie.fr",
+  email: "contact@ma-petite-lingerie.com",
   supportPage: "/conseils",
 };
 

@@ -1,22 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { Flower2, Gift, Sparkles } from "lucide-react";
 
-import { products } from "@/features/catalog/data/products";
 import { getCategoryLabel } from "@/features/catalog/lib/filters";
 import { HeroCarousel } from "@/features/home/components/hero-carousel";
+import { NewsletterForm } from "@/features/home/components/newsletter-form";
 import {
-  categoryCards,
-  sourcePromoBanners,
+  buildCategoryCards,
+  buildSourcePromoBanners,
   sourceStoryCards,
 } from "@/features/home/data/luxury-content";
-import { NewsletterForm } from "@/features/home/components/newsletter-form";
+import { readSourceProducts } from "@/lib/server/config-store";
 
 const priorityCategorySlugs = new Set(["lingerie", "sextoys"]);
-const priorityProducts = products.filter((product) => priorityCategorySlugs.has(product.categorySlug));
-const remainingProducts = products.filter((product) => !priorityCategorySlugs.has(product.categorySlug));
-const bestSellers = [...priorityProducts, ...remainingProducts].slice(0, 12);
-
 const storyIcons = [Flower2, Gift, Sparkles];
 
 const editorialSections = [
@@ -37,14 +34,22 @@ const editorialSections = [
   },
 ];
 
-const editorialProductSections = editorialSections
-  .map((section) => ({
-    ...section,
-    products: products.filter((item) => item.categorySlug === section.slug).slice(0, 8),
-  }))
-  .filter((section) => section.products.length > 0);
+export default async function HomePage() {
+  noStore();
+  const products = await readSourceProducts();
+  const priorityProducts = products.filter((product) => priorityCategorySlugs.has(product.categorySlug));
+  const remainingProducts = products.filter((product) => !priorityCategorySlugs.has(product.categorySlug));
+  const bestSellers = [...priorityProducts, ...remainingProducts].slice(0, 12);
 
-export default function HomePage() {
+  const editorialProductSections = editorialSections
+    .map((section) => ({
+      ...section,
+      products: products.filter((item) => item.categorySlug === section.slug).slice(0, 8),
+    }))
+    .filter((section) => section.products.length > 0);
+
+  const categoryCards = buildCategoryCards(products);
+  const sourcePromoBanners = buildSourcePromoBanners(products);
   return (
     <>
       <HeroCarousel />

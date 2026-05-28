@@ -1,9 +1,9 @@
 import {
   sourceFeaturedCategories,
   sourceMenuLinks,
-  sourceProducts,
   sourceStoryHighlights,
 } from "@/features/source/data/source-data";
+import type { Product } from "@/types/shop";
 
 export type HeroSlide = {
   id: string;
@@ -44,34 +44,70 @@ const featuredLabelBySlug: Record<string, string> = {
   promotions: "Promotions",
 };
 
-const categoryImageBySlug = new Map<string, string>();
-for (const product of sourceProducts) {
-  if (!product.image || categoryImageBySlug.has(product.categorySlug)) {
-    continue;
-  }
-
-  categoryImageBySlug.set(product.categorySlug, product.image);
-}
-
 const fallbackFeaturedImageBySlug = new Map(sourceFeaturedCategories.map((item) => [item.slug, item.image] as const));
 
-function getCategoryRepresentativeImage(slug: string) {
+function getCategoryRepresentativeImage(slug: string, products: Product[]) {
+  const categoryProduct = products.find((product) => product.categorySlug === slug && Boolean(product.image));
+
   if (slug === "promotions") {
-    const promoProduct = sourceProducts.find((product) => {
+    const promoProduct = products.find((product) => {
       const compareAtPrice = product.compareAtPrice ?? 0;
-      return compareAtPrice > product.price;
+      return compareAtPrice > product.price && Boolean(product.image);
     });
+
     if (promoProduct?.image) {
       return promoProduct.image;
     }
   }
 
   return (
-    categoryImageBySlug.get(slug) ??
+    categoryProduct?.image ??
     fallbackFeaturedImageBySlug.get(slug) ??
-    categoryImageBySlug.get("lingerie") ??
+    products.find((product) => product.categorySlug === "lingerie" && Boolean(product.image))?.image ??
     "/hero-slide-01-lingerie-custom.webp"
   );
+}
+
+export function buildCategoryCards(products: Product[]) {
+  const featuredBySlug = new Map(sourceFeaturedCategories.map((item) => [item.slug, item] as const));
+
+  return featuredOrder.map((slug, index) => {
+    const sourceItem = featuredBySlug.get(slug);
+
+    return {
+      id: sourceItem?.id ?? `home-featured-${slug}`,
+      label: sourceItem?.label ?? featuredLabelBySlug[slug] ?? slug,
+      href: sourceItem?.href ?? `/catalogue?categorie=${slug}`,
+      image: getCategoryRepresentativeImage(slug, products),
+      featured: index < 2,
+    };
+  });
+}
+
+export function buildSourcePromoBanners(products: Product[]): HomePromoBanner[] {
+  return [
+    {
+      label: "Lingerie premium importee de nos sources",
+      ctaLabel: "Explorer",
+      href: "/catalogue?categorie=lingerie",
+      sourceUrl: "https://www.maisonlejaby.com/fr-bj/collections/lingerie",
+      image: getCategoryRepresentativeImage("lingerie", products),
+    },
+    {
+      label: "Plaisir premium importee de nos sources",
+      ctaLabel: "Explorer",
+      href: "/catalogue?categorie=sextoys",
+      sourceUrl: "https://www.espaceplaisir.fr/939-sextoys",
+      image: getCategoryRepresentativeImage("sextoys", products),
+    },
+    {
+      label: "Bien-etre premium importee de nos sources",
+      ctaLabel: "Explorer",
+      href: "/catalogue?categorie=bien-etre",
+      sourceUrl: "https://www.espaceplaisir.fr/991-bien-etre",
+      image: getCategoryRepresentativeImage("bien-etre", products),
+    },
+  ];
 }
 
 export const heroSlides: HeroSlide[] = [
@@ -94,44 +130,6 @@ export const heroSlides: HeroSlide[] = [
     ctaLabel: "Explorer le plaisir",
     ctaHref: "/catalogue?categorie=sextoys",
     theme: "dark",
-  },
-];
-
-const featuredBySlug = new Map(sourceFeaturedCategories.map((item) => [item.slug, item] as const));
-
-export const categoryCards = featuredOrder.map((slug, index) => {
-  const sourceItem = featuredBySlug.get(slug);
-
-  return {
-    id: sourceItem?.id ?? `home-featured-${slug}`,
-    label: sourceItem?.label ?? featuredLabelBySlug[slug] ?? slug,
-    href: sourceItem?.href ?? `/catalogue?categorie=${slug}`,
-    image: getCategoryRepresentativeImage(slug),
-    featured: index < 2,
-  };
-});
-
-export const sourcePromoBanners: HomePromoBanner[] = [
-  {
-    label: "Lingerie premium importee de nos sources",
-    ctaLabel: "Explorer",
-    href: "/catalogue?categorie=lingerie",
-    sourceUrl: "https://www.maisonlejaby.com/fr-bj/collections/lingerie",
-    image: getCategoryRepresentativeImage("lingerie"),
-  },
-  {
-    label: "Plaisir premium importee de nos sources",
-    ctaLabel: "Explorer",
-    href: "/catalogue?categorie=sextoys",
-    sourceUrl: "https://www.espaceplaisir.fr/939-sextoys",
-    image: getCategoryRepresentativeImage("sextoys"),
-  },
-  {
-    label: "Bien-etre premium importee de nos sources",
-    ctaLabel: "Explorer",
-    href: "/catalogue?categorie=bien-etre",
-    sourceUrl: "https://www.espaceplaisir.fr/991-bien-etre",
-    image: getCategoryRepresentativeImage("bien-etre"),
   },
 ];
 

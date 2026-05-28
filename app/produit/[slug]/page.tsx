@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
 
 import { Container } from "@/components/ui/container";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { ProductMediaGallery } from "@/features/catalog/components/product-media-gallery";
-import { getProductBySlug, products } from "@/features/catalog/data/products";
+import { readSourceProducts } from "@/lib/server/config-store";
 import { getCategoryLabel } from "@/features/catalog/lib/filters";
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
 import { WishlistToggleButton } from "@/features/wishlist/components/wishlist-toggle-button";
@@ -32,8 +33,10 @@ function formatPrice(value: number) {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
+  noStore();
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const products = await readSourceProducts();
+  const product = products.find((entry) => entry.slug === slug);
 
   if (!product) {
     notFound();

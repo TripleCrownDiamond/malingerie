@@ -4,6 +4,7 @@ import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from "@cl
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { CartDrawer } from "@/features/cart/components/cart-drawer";
+import { ConsentBanners } from "@/features/legal/components/consent-banners";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 
 import "./globals.css";
@@ -55,6 +56,7 @@ export default function RootLayout({
             <CartDrawer />
             <main>{children}</main>
             <SiteFooter />
+            <ConsentBanners />
           </div>
         </ClerkProvider>
       </body>

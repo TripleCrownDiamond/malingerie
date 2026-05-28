@@ -52,3 +52,8 @@ newdata.html
 
 # local agent tooling
 /.agents/
+/data/
+/public/invoices/
+/deploy/
+/sqlite/
+

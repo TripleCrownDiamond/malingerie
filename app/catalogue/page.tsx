@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 
 import { Container } from "@/components/ui/container";
 import { FormSubmitButton } from "@/components/ui/form-submit-button";
@@ -7,6 +8,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { categories } from "@/features/catalog/data/categories";
 import { searchProducts } from "@/features/catalog/lib/filters";
+import { readSourceProducts } from "@/lib/server/config-store";
 
 type CataloguePageProps = {
   searchParams: Promise<{ categorie?: string; q?: string; page?: string; souscategorie?: string }>;
@@ -36,12 +38,14 @@ function labelFromSlug(slug: string) {
 }
 
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
+  noStore();
   const params = await searchParams;
+  const products = await readSourceProducts();
   const category = params.categorie ?? "all";
   const search = params.q ?? "";
   const requestedSubcategory = params.souscategorie ?? "all";
 
-  const searchedProducts = searchProducts(search, "all", "all");
+  const searchedProducts = searchProducts(products, search, "all", "all");
   const totalFoundAcrossCatalogue = searchedProducts.length;
 
   const categoryCounts = new Map<string, number>();
@@ -52,7 +56,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
     );
   }
 
-  const productsForSubcategories = searchProducts(search, category, "all");
+  const productsForSubcategories = searchProducts(products, search, category, "all");
 
   const subcategoryMap = new Map<string, SubcategoryCard>();
   for (const product of productsForSubcategories) {
@@ -86,7 +90,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       ? requestedSubcategory
       : "all";
 
-  const filteredProducts = searchProducts(search, category, effectiveSubcategory);
+  const filteredProducts = searchProducts(products, search, category, effectiveSubcategory);
   const totalProducts = filteredProducts.length;
   const totalPages = Math.max(1, Math.ceil(totalProducts / PRODUCTS_PER_PAGE));
   const currentPage = Math.min(asPositiveInt(params.page), totalPages);

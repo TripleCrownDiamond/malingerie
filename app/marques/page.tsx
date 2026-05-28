@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { FormSubmitButton } from "@/components/ui/form-submit-button";
 import { ProductCard } from "@/features/catalog/components/product-card";
-import { products } from "@/features/catalog/data/products";
+import { readSourceProducts } from "@/lib/server/config-store";
 import type { Product } from "@/types/shop";
 
 type MarquesPageProps = {
@@ -73,7 +74,7 @@ function inferBrand(product: Product) {
   return undefined;
 }
 
-function buildBrandEntries() {
+function buildBrandEntries(products: Product[]) {
   const map = new Map<string, BrandEntry>();
 
   for (const product of products) {
@@ -106,12 +107,14 @@ function buildBrandEntries() {
 }
 
 export default async function MarquesPage({ searchParams }: MarquesPageProps) {
+  noStore();
   const params = await searchParams;
   const query = cleanText(params.q ?? "");
   const queryKey = normalizeKey(query);
   const selectedBrandKey = normalizeKey(params.marque ?? "");
 
-  const allBrands = buildBrandEntries();
+  const products = await readSourceProducts();
+  const allBrands = buildBrandEntries(products);
   const visibleBrands = queryKey ? allBrands.filter((brand) => normalizeKey(brand.name).includes(queryKey)) : allBrands;
 
   const selectedBrand = allBrands.find((brand) => brand.key === selectedBrandKey);
