@@ -4,47 +4,9 @@ import { unstable_noStore as noStore } from "next/cache";
 
 import { Container } from "@/components/ui/container";
 import { categories } from "@/features/catalog/data/categories";
+import { adviceGuides } from "@/features/guides/data/advice-guides";
 import { readSourceProducts } from "@/lib/server/config-store";
 import type { Product } from "@/types/shop";
-
-const guideCards = [
-  {
-    id: "guide-1",
-    eyebrow: "Debuter",
-    title: "Choisir selon ton niveau",
-    description:
-      "Commence par des formats simples, des matieres douces et des dimensions progressives. Le but est d'installer la confiance avant l'intensite.",
-    href: "/catalogue?categorie=sextoys",
-    cta: "Voir la selection debutant",
-  },
-  {
-    id: "guide-2",
-    eyebrow: "Confort",
-    title: "Lubrification et douceur",
-    description:
-      "Adapte la texture et le type de lubrifiant a la pratique. Une bonne lubrification ameliore nettement le confort et la qualite des sensations.",
-    href: "/catalogue?souscategorie=lubrifiant-et-gel-lubrifiant",
-    cta: "Explorer les lubrifiants",
-  },
-  {
-    id: "guide-3",
-    eyebrow: "Couple",
-    title: "Construire une complicite",
-    description:
-      "Parlez de vos envies avant, pendant et apres. Le consentement, les limites et le feedback rendent chaque experience plus sereine et plus plaisante.",
-    href: "/catalogue?categorie=jeux-et-librairie",
-    cta: "Decouvrir les jeux",
-  },
-  {
-    id: "guide-4",
-    eyebrow: "Entretien",
-    title: "Hygiene et durabilite",
-    description:
-      "Nettoie avant et apres usage, stocke au sec et utilise des produits adaptes a la matiere. Un bon entretien preserve l'hygiene et la longivite.",
-    href: "/catalogue?categorie=bien-etre",
-    cta: "Voir les essentiels bien-etre",
-  },
-];
 
 const faqItems = [
   {
@@ -139,16 +101,16 @@ export default async function ConseilsPage() {
         <section className="space-y-5">
           <h2 className="font-display text-3xl text-[var(--ink)]">Guides pratiques</h2>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {guideCards.map((guide) => (
-              <article key={guide.id} className="rounded-3xl border border-[var(--line)] bg-white/85 p-6">
+            {adviceGuides.map((guide) => (
+              <article key={guide.slug} className="rounded-3xl border border-[var(--line)] bg-white/85 p-6">
                 <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">{guide.eyebrow}</p>
                 <h3 className="font-display mt-3 text-2xl text-[var(--ink)]">{guide.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{guide.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{guide.summary}</p>
                 <Link
-                  href={guide.href}
+                  href={`/conseils/${guide.slug}`}
                   className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent)] hover:text-rose-600"
                 >
-                  {guide.cta}
+                  Lire le guide
                 </Link>
               </article>
             ))}

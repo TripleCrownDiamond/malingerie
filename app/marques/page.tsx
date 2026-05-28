@@ -5,117 +5,23 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { FormSubmitButton } from "@/components/ui/form-submit-button";
 import { ProductCard } from "@/features/catalog/components/product-card";
+import { buildBrandEntries, cleanBrandText, normalizeBrandKey } from "@/features/brands/lib/brands";
 import { readSourceProducts } from "@/lib/server/config-store";
-import type { Product } from "@/types/shop";
 
 type MarquesPageProps = {
   searchParams: Promise<{ q?: string; marque?: string }>;
 };
 
-type BrandEntry = {
-  name: string;
-  key: string;
-  count: number;
-  image: string;
-  products: Product[];
-};
-
-const genericTagKeys = new Set([
-  "selection",
-  "promotion",
-  "promotions",
-  "espace-plaisir",
-  "plaisir",
-  "lingerie",
-  "bdsm",
-  "bien-etre",
-  "aphrodisiaques",
-  "jeux-et-librairie",
-]);
-
-function normalizeKey(value: string) {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function cleanText(value: string) {
-  return value.replace(/\s+/g, " ").trim();
-}
-
-function inferBrand(product: Product) {
-  const specBrand = product.specifications?.find((item) => normalizeKey(item.label).includes("marque"))?.value;
-  if (specBrand) {
-    const cleaned = cleanText(specBrand);
-    if (cleaned) {
-      return cleaned;
-    }
-  }
-
-  const categoryKey = normalizeKey(product.categorySlug);
-  const subcategoryKey = normalizeKey(product.subcategoryLabel ?? product.subcategorySlug ?? "");
-
-  const candidateTags = [product.tags[2], ...product.tags].filter(Boolean);
-
-  for (const tag of candidateTags) {
-    const cleaned = cleanText(tag);
-    const key = normalizeKey(cleaned);
-
-    if (!key || key.length < 2) continue;
-    if (genericTagKeys.has(key)) continue;
-    if (key === categoryKey || key === subcategoryKey) continue;
-
-    return cleaned;
-  }
-
-  return undefined;
-}
-
-function buildBrandEntries(products: Product[]) {
-  const map = new Map<string, BrandEntry>();
-
-  for (const product of products) {
-    const brand = inferBrand(product);
-    if (!brand) {
-      continue;
-    }
-
-    const key = normalizeKey(brand);
-    const existing = map.get(key);
-
-    if (!existing) {
-      map.set(key, {
-        name: brand,
-        key,
-        count: 1,
-        image: product.image,
-        products: [product],
-      });
-      continue;
-    }
-
-    existing.count += 1;
-    if (existing.products.length < 20) {
-      existing.products.push(product);
-    }
-  }
-
-  return Array.from(map.values()).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-}
-
 export default async function MarquesPage({ searchParams }: MarquesPageProps) {
   noStore();
   const params = await searchParams;
-  const query = cleanText(params.q ?? "");
-  const queryKey = normalizeKey(query);
-  const selectedBrandKey = normalizeKey(params.marque ?? "");
+  const query = cleanBrandText(params.q ?? "");
+  const queryKey = normalizeBrandKey(query);
+  const selectedBrandKey = normalizeBrandKey(params.marque ?? "");
 
   const products = await readSourceProducts();
   const allBrands = buildBrandEntries(products);
-  const visibleBrands = queryKey ? allBrands.filter((brand) => normalizeKey(brand.name).includes(queryKey)) : allBrands;
+  const visibleBrands = queryKey ? allBrands.filter((brand) => normalizeBrandKey(brand.name).includes(queryKey)) : allBrands;
 
   const selectedBrand = allBrands.find((brand) => brand.key === selectedBrandKey);
   const selectedProducts = (selectedBrand?.products ?? []).slice(0, 12);
@@ -159,7 +65,7 @@ export default async function MarquesPage({ searchParams }: MarquesPageProps) {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleBrands.map((brand) => (
             <article key={brand.key} className="overflow-hidden rounded-3xl border border-[var(--line)] bg-white/90">
-              <Link href={`/marques?marque=${encodeURIComponent(brand.key)}`} className="group block">
+              <Link href={`/marques/${encodeURIComponent(brand.key)}`} className="group block">
                 <div className="relative aspect-[5/4] overflow-hidden">
                   <Image
                     src={brand.image}
@@ -184,7 +90,7 @@ export default async function MarquesPage({ searchParams }: MarquesPageProps) {
                   Voir produits
                 </Link>
                 <Link
-                  href={`/marques?marque=${encodeURIComponent(brand.key)}`}
+                  href={`/marques/${encodeURIComponent(brand.key)}`}
                   className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent)] hover:text-rose-600"
                 >
                   Details
