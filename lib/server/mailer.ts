@@ -245,6 +245,9 @@ async function sendViaSmtp({
       host,
       port: Number.parseInt(port, 10),
       secure: Number.parseInt(port, 10) === 465,
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 10000,
       auth: {
         user,
         pass,

@@ -23,6 +23,25 @@ const stateKeys = {
   orders: "orders",
 } as const;
 
+const remoteStoreTimeoutMs = 5000;
+
+async function withTimeout<T>(promise: PromiseLike<T>, label: string, timeoutMs = remoteStoreTimeoutMs): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => reject(new Error(`${label}_TIMEOUT`)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
+}
+
 const defaultAdminConfig: AdminConfig = {
   allowAnySignedInUser: true,
   adminUserIds: [],
@@ -77,11 +96,10 @@ async function readAppState<T>(key: string): Promise<T | null> {
 
   const table = getSupabaseAppStateTable();
 
-  const { data, error } = await client
-    .from(table)
-    .select("value")
-    .eq("key", key)
-    .maybeSingle<{ value: T }>();
+  const { data, error } = await withTimeout<{ data: { value: T } | null; error: unknown }>(
+    client.from(table).select("value").eq("key", key).maybeSingle<{ value: T }>(),
+    `SUPABASE_READ_${key}`,
+  );
 
   if (error || !data) {
     return null;
@@ -98,13 +116,16 @@ async function writeAppState<T>(key: string, value: T) {
 
   const table = getSupabaseAppStateTable();
 
-  const { error } = await client.from(table).upsert(
-    {
-      key,
-      value,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "key" },
+  const { error } = await withTimeout<{ error: unknown }>(
+    client.from(table).upsert(
+      {
+        key,
+        value,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "key" },
+    ),
+    `SUPABASE_WRITE_${key}`,
   );
 
   if (error) {
@@ -243,11 +264,14 @@ export async function storeInvoicePdf(fileName: string, content: Buffer, origin:
     const bucket = getSupabaseInvoicesBucket();
     const storagePath = fileName;
 
-    const { error } = await client.storage.from(bucket).upload(storagePath, content, {
-      contentType: "application/pdf",
-      upsert: true,
-      cacheControl: "3600",
-    });
+    const { error } = await withTimeout<{ error: unknown }>(
+      client.storage.from(bucket).upload(storagePath, content, {
+        contentType: "application/pdf",
+        upsert: true,
+        cacheControl: "3600",
+      }),
+      "SUPABASE_INVOICE_UPLOAD",
+    );
 
     if (!error) {
       const { data } = client.storage.from(bucket).getPublicUrl(storagePath);

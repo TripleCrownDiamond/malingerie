@@ -61,6 +61,8 @@ export async function POST(request: Request) {
       );
     }
 
+    console.error("ORDER_CREATE_FAILED", error);
+
     return NextResponse.json({ ok: false, error: "Impossible d'enregistrer la commande" }, { status: 500 });
   }
 }

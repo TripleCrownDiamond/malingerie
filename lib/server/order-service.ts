@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { promises as fsPromises } from "node:fs";
 import path from "node:path";
 
-import PDFDocument from "pdfkit";
+import PDFDocument from "pdfkit/js/pdfkit.standalone";
 
 import { legalCompanyProfile, legalContact } from "@/features/legal/data/legal-company";
-import { readBankTransferConfig, readOrders, storeInvoicePdf, writeOrders } from "@/lib/server/config-store";
+import { readBankTransferConfig, readOrders, writeOrders } from "@/lib/server/config-store";
 import { sendInvoiceEmail } from "@/lib/server/mailer";
 import type { BankTransferConfig } from "@/types/admin";
 import type { OrderCustomer, OrderDeliveryMethod, OrderPaymentMethod, OrderRecord } from "@/types/order";
@@ -48,7 +48,7 @@ function drawTableHeader(doc: PDFKit.PDFDocument, y: number) {
   return y + 26;
 }
 
-async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: BankTransferConfig) {
+export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: BankTransferConfig) {
   const logoPath = path.join(process.cwd(), "public", "logo-ma-petite-lingerie.png");
   let hasLogo = false;
 
@@ -279,25 +279,34 @@ export async function createOrder(input: CreateOrderInput) {
     emailStatus: "skipped",
   };
 
-  const invoiceFileName = `${order.invoiceNumber}.pdf`;
-  const invoicePdf = await createInvoicePdfBuffer(order, bankConfig);
-  const invoiceUrl = await storeInvoicePdf(invoiceFileName, invoicePdf, input.origin);
+  const invoiceUrl = `${input.origin}/api/invoices/${order.id}`;
 
   order.invoiceUrl = invoiceUrl;
 
-  const emailResult = await sendInvoiceEmail({
-    to: order.customer.email,
-    customerName: order.customer.fullName,
-    reference: order.reference,
-    invoiceUrl,
-    total: order.total,
-  });
+  orders.push(order);
+  await writeOrders(orders);
+
+  const emailResult = await Promise.race([
+    sendInvoiceEmail({
+      to: order.customer.email,
+      customerName: order.customer.fullName,
+      reference: order.reference,
+      invoiceUrl,
+      total: order.total,
+    }),
+    new Promise<{ status: "failed"; error: string }>((resolve) => {
+      setTimeout(() => resolve({ status: "failed", error: "EMAIL_TIMEOUT" }), 8000);
+    }),
+  ]);
 
   order.emailStatus = emailResult.status;
   order.emailError = emailResult.error;
 
-  orders.push(order);
-  await writeOrders(orders);
+  try {
+    await writeOrders(orders);
+  } catch (error) {
+    console.error("ORDER_EMAIL_STATUS_UPDATE_FAILED", error);
+  }
 
   return order;
 }
