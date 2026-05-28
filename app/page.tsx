@@ -109,7 +109,7 @@ export default async function HomePage() {
           <p className="text-lg italic uppercase tracking-[0.22em] text-gray-500">Une selection premium inspiree des meilleures references et pensee pour Ma Petite Lingerie</p>
         </div>
 
-        <div className="mx-auto grid w-full max-w-[1800px] grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-7">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 justify-center gap-6 sm:grid-cols-3 lg:grid-cols-6">
           {categoryCards.map((card) => (
             <Link
               key={card.id}

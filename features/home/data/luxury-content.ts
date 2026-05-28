@@ -85,21 +85,21 @@ export function buildCategoryCards(products: Product[]) {
 export function buildSourcePromoBanners(products: Product[]): HomePromoBanner[] {
   return [
     {
-      label: "Lingerie premium importee de nos sources",
+      label: "Lingerie elegante pour chaque silhouette",
       ctaLabel: "Explorer",
       href: "/catalogue?categorie=lingerie",
       sourceUrl: "https://www.maisonlejaby.com/fr-bj/collections/lingerie",
       image: getCategoryRepresentativeImage("lingerie", products),
     },
     {
-      label: "Plaisir premium importee de nos sources",
+      label: "Plaisir intime, discret et raffine",
       ctaLabel: "Explorer",
       href: "/catalogue?categorie=sextoys",
       sourceUrl: "https://www.espaceplaisir.fr/939-sextoys",
       image: getCategoryRepresentativeImage("sextoys", products),
     },
     {
-      label: "Bien-etre premium importee de nos sources",
+      label: "Bien-etre intime au quotidien",
       ctaLabel: "Explorer",
       href: "/catalogue?categorie=bien-etre",
       sourceUrl: "https://www.espaceplaisir.fr/991-bien-etre",
