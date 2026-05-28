@@ -49,7 +49,7 @@ function drawTableHeader(doc: PDFKit.PDFDocument, y: number) {
 }
 
 export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: BankTransferConfig) {
-  const logoPath = path.join(process.cwd(), "public", "logo-ma-petite-lingerie.png");
+  const logoPath = path.join(process.cwd(), "public", "logo-nav-femme.png");
   let hasLogo = false;
 
   try {
@@ -84,7 +84,7 @@ export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: Ban
 
     if (hasLogo) {
       try {
-        doc.image(logoPath, 50, 45, { fit: [110, 70] });
+        doc.image(logoPath, 50, 38, { fit: [120, 92] });
       } catch {
         // Ignore image read issues and continue without logo.
       }
