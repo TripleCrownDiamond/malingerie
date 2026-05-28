@@ -1,8 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { sourceFooterShopLinks } from "@/features/source/data/source-data";
-import { resolveSourceMenuHref } from "@/features/source/lib/navigation";
+const shopLinks = [
+  { label: "Lingerie", href: "/lingerie" },
+  { label: "BDSM", href: "/bdsm" },
+  { label: "Bien-etre", href: "/bien-etre" },
+  { label: "Aphrodisiaques", href: "/aphrodisiaques" },
+  { label: "Jeux et librairie", href: "/jeux-et-librairie" },
+  { label: "Marques", href: "/marques" },
+];
+
+const assistanceLinks = [
+  { label: "Expedition express", href: "/expedition-express" },
+  { label: "Paiement securise", href: "/paiement-securise" },
+  { label: "Livraison discrete", href: "/livraison-discrete" },
+  { label: "Nous contacter", href: "/nous-contacter" },
+];
+
+const maisonLinks = [
+  { label: "Notre histoire", href: "/notre-histoire" },
+  { label: "Conseils et guides", href: "/conseils" },
+  { label: "Mentions legales", href: "/mentions-legales" },
+  { label: "CGU et CGV", href: "/cgu-cgv" },
+  { label: "Confidentialite", href: "/politique-confidentialite" },
+  { label: "Cookies", href: "/politique-cookies" },
+];
 
 export function SiteFooter() {
   return (
@@ -23,7 +45,7 @@ export function SiteFooter() {
               </span>
             </Link>
             <p className="max-w-md text-base leading-relaxed text-gray-600">
-              Une maison de creation francaise qui celebre l&apos;intimite avec elegance. Inspiration premium, produits selectionnes et experience discretes.
+              Une maison de creation francaise qui celebre l&apos;intimite avec elegance. Inspiration premium, produits selectionnes et experience discrete.
             </p>
             <div className="flex items-center gap-8 text-sm uppercase tracking-[0.2em] text-rose-900">
               <Link href="#" className="hover:text-[var(--accent)]">Instagram</Link>
@@ -35,39 +57,39 @@ export function SiteFooter() {
           <div className="space-y-6">
             <h4 className="text-[11px] font-bold uppercase tracking-[0.4em] text-rose-900">La boutique</h4>
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
-              {sourceFooterShopLinks.map((item) => {
-                const resolvedHref = resolveSourceMenuHref(item.slug, item.href);
-
-                return (
-                  <li key={item.slug}>
-                    <Link href={resolvedHref} className="hover:text-[var(--accent)]">
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
+              {shopLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="space-y-6">
             <h4 className="text-[11px] font-bold uppercase tracking-[0.4em] text-rose-900">Assistance</h4>
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
-              <li><Link href="#" className="hover:text-[var(--accent)]">Expedition express</Link></li>
-              <li><Link href="#" className="hover:text-[var(--accent)]">Paiement securise</Link></li>
-              <li><Link href="#" className="hover:text-[var(--accent)]">Livraison discrete</Link></li>
-              <li><Link href="#" className="hover:text-[var(--accent)]">Nous contacter</Link></li>
+              {assistanceLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="space-y-6">
             <h4 className="text-[11px] font-bold uppercase tracking-[0.4em] text-rose-900">Maison</h4>
             <ul className="space-y-4 text-[14px] font-medium text-gray-600">
-              <li><Link href="#" className="hover:text-[var(--accent)]">Notre histoire</Link></li>
-              <li><Link href="/conseils" className="hover:text-[var(--accent)]">Conseils et guides</Link></li>
-              <li><Link href="/mentions-legales" className="hover:text-[var(--accent)]">Mentions legales</Link></li>
-              <li><Link href="/cgu-cgv" className="hover:text-[var(--accent)]">CGU et CGV</Link></li>
-              <li><Link href="/politique-confidentialite" className="hover:text-[var(--accent)]">Confidentialite</Link></li>
-              <li><Link href="/politique-cookies" className="hover:text-[var(--accent)]">Cookies</Link></li>
+              {maisonLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-[var(--accent)]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -87,4 +109,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

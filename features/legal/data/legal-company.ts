@@ -24,7 +24,7 @@ export const legalCompanyProfile = {
 
 export const legalContact = {
   email: "contact@ma-petite-lingerie.com",
-  supportPage: "/conseils",
+  supportPage: "/nous-contacter",
 };
 
 export const legalHost = {
