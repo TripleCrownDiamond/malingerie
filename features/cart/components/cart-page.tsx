@@ -524,7 +524,7 @@ export function CartPage() {
             <p className="mt-2 text-sm text-[var(--muted)]">Saisie carte simplifiee visuelle + alternative virement.</p>
 
             <div className="mt-5 space-y-4">
-              <label className="rounded-2xl border border-[var(--line)] bg-white p-4 opacity-80">
+              <label className="rounded-2xl border-2 border-amber-300 bg-amber-50/70 p-4 shadow-sm shadow-amber-100">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
                     <input
@@ -540,62 +540,59 @@ export function CartPage() {
                       <p>Visa, Mastercard, Carte Bleue</p>
                     </div>
                   </div>
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-800">
-                    Temporairement indisponible
+                  <span className="rounded-full bg-amber-600 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-sm">
+                    Indisponible
                   </span>
                 </div>
 
-                <div className="mt-4 rounded-2xl bg-[linear-gradient(140deg,#1f1b2d_0%,#34305c_45%,#6f3258_100%)] p-4 text-white shadow-lg">
-                  <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-white/85">
-                    <span>Carte bancaire</span>
-                    <span>VISA / MC</span>
-                  </div>
-                  <p className="mt-6 font-mono text-xl tracking-[0.28em]">0000 0000 0000 0000</p>
-                  <div className="mt-5 flex items-end justify-between text-[10px] uppercase tracking-[0.16em] text-white/85">
-                    <span>NOM PRENOM</span>
-                    <span>MM/AA</span>
-                  </div>
+                <div className="mt-4 rounded-2xl border border-amber-300 bg-white px-4 py-3 text-sm font-semibold text-amber-900 shadow-sm">
+                  Paiement par carte temporairement indisponible. Merci de choisir le virement bancaire pour confirmer la commande.
                 </div>
 
-                <div className="mt-4 grid gap-3">
-                  <div className="relative">
-                    <CreditCard size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                    <input
-                      disabled
-                      placeholder="1234 5678 9012 3456"
-                      className="w-full rounded-xl border border-[var(--line)] bg-zinc-100 py-3 pl-10 pr-4 font-mono text-sm tracking-[0.2em] text-zinc-500"
-                    />
+                <div className="mt-4 rounded-2xl border border-[var(--line)] bg-white p-3 opacity-60">
+                  <div className="mb-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
+                    <span>Carte bancaire</span>
+                    <span>Visa / Mastercard</span>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid gap-2">
+                    <div className="relative">
+                      <CreditCard size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                      <input
+                        disabled
+                        placeholder="1234 1234 1234 1234"
+                        className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-10 pr-24 font-mono text-[13px] tracking-[0.12em] text-zinc-500 outline-none"
+                      />
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400">CB</span>
+                    </div>
+
                     <input
                       disabled
                       placeholder="Nom sur la carte"
-                      className="rounded-xl border border-[var(--line)] bg-zinc-100 px-4 py-3 text-sm text-zinc-500 sm:col-span-2"
+                      className="h-11 rounded-lg border border-zinc-300 bg-zinc-100 px-3 text-[13px] text-zinc-500 outline-none"
                     />
-                    <div className="relative">
-                      <Calendar size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                      <input
-                        disabled
-                        placeholder="MM/AA"
-                        className="w-full rounded-xl border border-[var(--line)] bg-zinc-100 py-3 pl-10 pr-4 text-sm text-zinc-500"
-                      />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="relative">
+                        <Calendar size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                        <input
+                          disabled
+                          placeholder="MM / AA"
+                          className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-9 pr-3 text-[13px] text-zinc-500 outline-none"
+                        />
+                      </div>
+
+                      <div className="relative">
+                        <Lock size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+                        <input
+                          disabled
+                          placeholder="CVC"
+                          className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-9 pr-3 text-[13px] text-zinc-500 outline-none"
+                        />
+                      </div>
                     </div>
                   </div>
-
-                  <div className="relative max-w-[180px]">
-                    <Lock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                    <input
-                      disabled
-                      placeholder="CVC"
-                      className="w-full rounded-xl border border-[var(--line)] bg-zinc-100 py-3 pl-10 pr-4 text-sm text-zinc-500"
-                    />
-                  </div>
                 </div>
-
-                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-amber-800">
-                  Paiement par carte temporairement indisponible
-                </p>
               </label>
 
               <label className="cursor-pointer rounded-2xl border border-[var(--line)] bg-white p-4">
