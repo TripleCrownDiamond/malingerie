@@ -54,7 +54,30 @@ function ensureUniqueSlug(baseSlug: string, existingSlugs: Set<string>) {
   return `${baseSlug}-${index}`;
 }
 
-export async function GET() {
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return parsed;
+}
+
+function buildSearchIndex(product: Product) {
+  return [
+    product.name,
+    product.slug,
+    product.sku,
+    product.categorySlug,
+    product.subcategorySlug ?? "",
+    product.subcategoryLabel ?? "",
+    ...product.tags,
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+export async function GET(request: Request) {
   try {
     await getRequiredAdminUserId();
   } catch (error) {
@@ -62,8 +85,62 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: "Acces admin requis" }, { status: code });
   }
 
+  const url = new URL(request.url);
+  const query = (url.searchParams.get("q") ?? "").trim().toLowerCase();
+  const category = (url.searchParams.get("category") ?? "all").trim().toLowerCase();
+
+  const page = parsePositiveInt(url.searchParams.get("page"), 1);
+  const limit = Math.min(100, parsePositiveInt(url.searchParams.get("limit"), 20));
+
   const products = await readSourceProducts();
-  return NextResponse.json({ ok: true, products: products.slice(-50).reverse() });
+  const sortedProducts = [...products].reverse();
+  const totalStock = products.reduce((sum, product) => sum + product.stock, 0);
+  const averagePrice =
+    products.length > 0
+      ? products.reduce((sum, product) => sum + product.price, 0) / products.length
+      : 0;
+
+  const stats = {
+    totalProducts: products.length,
+    categoryCount: new Set(products.map((product) => product.categorySlug)).size,
+    subcategoryCount: new Set(
+      products
+        .map((product) => product.subcategorySlug)
+        .filter((subcategory): subcategory is string => Boolean(subcategory)),
+    ).size,
+    totalStock,
+    averagePrice,
+  };
+
+  const filteredProducts = sortedProducts.filter((product) => {
+    if (category !== "all" && product.categorySlug.toLowerCase() !== category) {
+      return false;
+    }
+
+    if (!query) {
+      return true;
+    }
+
+    return buildSearchIndex(product).includes(query);
+  });
+
+  const total = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * limit;
+  const paginatedProducts = filteredProducts.slice(start, start + limit);
+
+  return NextResponse.json({
+    ok: true,
+    products: paginatedProducts,
+    stats,
+    pagination: {
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    },
+  });
 }
 
 export async function POST(request: Request) {
