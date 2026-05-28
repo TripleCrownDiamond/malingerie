@@ -53,7 +53,7 @@ export default async function HomePage() {
           searchable.includes("vibro"))
       );
     })
-    .slice(0, 8);
+    .slice(0, 21);
 
   const editorialProductSections = editorialSections
     .map((section) => ({
@@ -121,12 +121,12 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-5 md:grid-cols-4 lg:grid-cols-8">
+            <div className="grid grid-flow-dense grid-cols-2 gap-5 md:grid-cols-4 lg:grid-cols-8">
               {pleasureFocusProducts.map((product, index) => (
                 <Link
                   key={`pleasure-focus-${product.id}`}
                   href={`/produit/${product.slug}`}
-                  className={`group block ${index === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+                  className={`group block ${index === 0 ? "col-span-2 row-span-2" : ""}`}
                 >
                   <div className={`relative mb-4 overflow-hidden rounded-[1.8rem] border border-white bg-white shadow-xl shadow-rose-200/40 ${index === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}>
                     <Image
