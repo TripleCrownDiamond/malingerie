@@ -1,5 +1,6 @@
 "use client";
 
+import { Show, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -44,7 +45,11 @@ function getCategoryIcon(slug: string) {
   return categoryIcons[slug] ?? Sparkles;
 }
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  isAdmin?: boolean;
+};
+
+export function SiteHeader({ isAdmin = false }: SiteHeaderProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -82,9 +87,11 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className="w-full border-b border-[var(--accent)]/35 bg-[#1a1a1a] px-4 py-2.5 text-center text-[10px] uppercase tracking-[0.2em] text-white">
-        Livraison offerte des 80EUR d&apos;achat - <span className="text-[#f3c3d1]">-20% sur votre premiere commande</span> - Retours gratuits
-      </div>
+      <Show when="signed-out">
+        <div className="w-full border-b border-[var(--accent)]/35 bg-[#1a1a1a] px-4 py-2.5 text-center text-[10px] uppercase tracking-[0.2em] text-white">
+          Livraison offerte des 80EUR d&apos;achat - <span className="text-[#f3c3d1]">-20% sur votre premiere commande</span> - Retours gratuits
+        </div>
+      </Show>
 
       <header className="sticky top-0 z-50 border-b border-rose-200 bg-white/95 backdrop-blur-md">
         <nav className="mx-auto w-full max-w-[1600px] px-4 sm:px-8">
@@ -93,9 +100,18 @@ export function SiteHeader() {
               <button type="button" onClick={() => setSearchOpen((prev) => !prev)} className="text-gray-800 transition hover:text-[var(--accent)]" aria-label="Rechercher">
                 <Search size={23} />
               </button>
-              <Link href="/sign-in" className="text-gray-800 transition hover:text-[var(--accent)]" aria-label="Connexion">
-                <User size={23} />
-              </Link>
+
+              <Show when="signed-out">
+                <Link href="/sign-in" className="text-gray-800 transition hover:text-[var(--accent)]" aria-label="Connexion">
+                  <User size={23} />
+                </Link>
+              </Show>
+
+              <Show when="signed-in">
+                <div className="flex items-center" aria-label="Mon profil">
+                  <UserButton />
+                </div>
+              </Show>
             </div>
 
             <Link href="/" className="justify-self-center" aria-label="Accueil Ma Petite Lingerie">
@@ -198,6 +214,19 @@ export function SiteHeader() {
                   {safeWishlistCount}
                 </span>
               </Link>
+
+              <Show when="signed-out">
+                <Link href="/sign-in" className="text-gray-800 transition hover:text-[var(--accent)]" aria-label="Connexion">
+                  <User size={22} />
+                </Link>
+              </Show>
+
+              <Show when="signed-in">
+                <div className="flex items-center" aria-label="Mon profil">
+                  <UserButton />
+                </div>
+              </Show>
+
               <button
                 type="button"
                 onClick={openDrawer}
@@ -266,9 +295,13 @@ export function SiteHeader() {
                 Checkout
               </Link>
 
-              <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
-                Connexion
-              </Link>
+              {isAdmin ? (
+                <Show when="signed-in">
+                  <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                    Dashboard admin
+                  </Link>
+                </Show>
+              ) : null}
             </div>
           </div>
         ) : null}
@@ -276,5 +309,3 @@ export function SiteHeader() {
     </>
   );
 }
-
-

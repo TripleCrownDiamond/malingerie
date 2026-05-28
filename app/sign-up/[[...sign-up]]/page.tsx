@@ -22,11 +22,10 @@ export default function SignUpPage() {
         <div className="pointer-events-none absolute -right-16 bottom-8 h-52 w-52 rounded-full bg-[var(--accent)]/15 blur-3xl" />
         <SignUp
           signInUrl="/sign-in"
-          fallbackRedirectUrl="/"
+          fallbackRedirectUrl="/admin"
           appearance={clerkAppearance}
         />
       </section>
     </Container>
   );
 }
-

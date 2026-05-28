@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { CartDrawer } from "@/features/cart/components/cart-drawer";
 import { ConsentBanners } from "@/features/legal/components/consent-banners";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { readAdminConfig } from "@/lib/server/config-store";
 
 import "./globals.css";
 
@@ -20,44 +22,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId } = await auth();
+
+  let isAdmin = false;
+
+  if (userId) {
+    const adminConfig = await readAdminConfig();
+    isAdmin = adminConfig.allowAnySignedInUser || adminConfig.adminUserIds.includes(userId);
+  }
+
   return (
     <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full bg-[var(--paper)] text-[var(--ink)]" suppressHydrationWarning>
         <ClerkProvider appearance={clerkAppearance}>
           <div className="min-h-screen">
-            <div className="border-b border-[var(--line)] bg-white/90 px-4 py-2">
-              <div className="mx-auto flex w-full max-w-[1600px] items-center justify-end gap-2">
-                <Show when="signed-out">
-                  <SignInButton mode="modal">
-                    <button
-                      type="button"
-                      className="rounded-full border border-[var(--line)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)] transition hover:border-[var(--accent)]"
-                    >
-                      Connexion
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button
-                      type="button"
-                      className="rounded-full bg-[var(--ink)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--paper)] transition hover:opacity-90"
-                    >
-                      Inscription
-                    </button>
-                  </SignUpButton>
-                </Show>
-
-                <Show when="signed-in">
-                  <UserButton />
-                </Show>
-              </div>
-            </div>
-
-            <SiteHeader />
+            <SiteHeader isAdmin={isAdmin} />
             <CartDrawer />
             <main>{children}</main>
             <SiteFooter />
