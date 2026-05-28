@@ -14,9 +14,12 @@ export const metadata: Metadata = {
   description:
     "Maison premium de lingerie et bien-etre intime: collections couture, sextoys design et experience e-commerce haut de gamme.",
   icons: {
-    icon: "/logo-ma-petite-lingerie.png",
-    shortcut: "/logo-ma-petite-lingerie.png",
-    apple: "/logo-ma-petite-lingerie.png",
+    icon: [
+      { url: "/favicon.ico?v=mpl-2", sizes: "any" },
+      { url: "/icon.png?v=mpl-2", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.ico?v=mpl-2",
+    apple: "/apple-icon.png?v=mpl-2",
   },
 };
 
