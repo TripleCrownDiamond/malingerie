@@ -106,7 +106,7 @@ export default async function HomePage() {
         <div className="mb-20 text-center">
           <h2 className="font-display text-5xl text-rose-900">Nos categories phares</h2>
           <div className="mx-auto mb-4 mt-6 h-1 w-24 bg-[linear-gradient(135deg,var(--accent-soft)_0%,var(--accent)_100%)]" />
-          <p className="text-lg italic uppercase tracking-[0.22em] text-gray-500">Structure inspiree de la source, adaptee a Ma Petite Lingerie</p>
+          <p className="text-lg italic uppercase tracking-[0.22em] text-gray-500">Une selection premium inspiree des meilleures references et pensee pour Ma Petite Lingerie</p>
         </div>
 
         <div className="mx-auto grid w-full max-w-[1800px] grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-7">
