@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: "Ma Petite Lingerie | Premium & Sensuel",
   description:
     "Maison premium de lingerie et bien-etre intime: collections couture, sextoys design et experience e-commerce haut de gamme.",
+  icons: {
+    icon: "/logo-ma-petite-lingerie.png",
+    shortcut: "/logo-ma-petite-lingerie.png",
+    apple: "/logo-ma-petite-lingerie.png",
+  },
 };
 
 export default function RootLayout({
