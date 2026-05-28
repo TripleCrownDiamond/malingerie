@@ -14,6 +14,7 @@ import {
 import { readSourceProducts } from "@/lib/server/config-store";
 
 const priorityCategorySlugs = new Set(["lingerie", "sextoys"]);
+const pleasureFocusSubcategories = new Set(["gode-et-godemichet", "vibromasseur"]);
 const storyIcons = [Flower2, Gift, Sparkles];
 
 const editorialSections = [
@@ -40,6 +41,19 @@ export default async function HomePage() {
   const priorityProducts = products.filter((product) => priorityCategorySlugs.has(product.categorySlug));
   const remainingProducts = products.filter((product) => !priorityCategorySlugs.has(product.categorySlug));
   const bestSellers = [...priorityProducts, ...remainingProducts].slice(0, 12);
+  const pleasureFocusProducts = products
+    .filter((product) => {
+      const searchable = `${product.name} ${product.subcategorySlug ?? ""} ${product.subcategoryLabel ?? ""}`.toLowerCase();
+
+      return (
+        product.categorySlug === "sextoys" &&
+        (pleasureFocusSubcategories.has(product.subcategorySlug ?? "") ||
+          searchable.includes("gode") ||
+          searchable.includes("godemichet") ||
+          searchable.includes("vibro"))
+      );
+    })
+    .slice(0, 8);
 
   const editorialProductSections = editorialSections
     .map((section) => ({
@@ -75,6 +89,69 @@ export default async function HomePage() {
           })}
         </div>
       </section>
+
+      {pleasureFocusProducts.length > 0 ? (
+        <section className="relative overflow-hidden px-8 py-16 lg:py-20">
+          <div className="absolute left-0 top-10 h-72 w-72 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+          <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-rose-200/50 blur-3xl" />
+
+          <div className="relative mx-auto max-w-[1800px]">
+            <div className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+              <div className="max-w-3xl">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.32em] text-[var(--accent)]">Selection plaisir</p>
+                <h2 className="font-display text-5xl leading-tight text-rose-900 md:text-6xl">Godes, godemichets & vibromasseurs</h2>
+                <p className="mt-5 max-w-2xl text-base italic leading-relaxed text-[var(--muted)]">
+                  Une selection intime et discrete pour explorer les sensations, avec des pieces choisies pour leur confort, leur design et leur efficacite.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/catalogue?categorie=sextoys&souscategorie=gode-et-godemichet"
+                  className="rounded-full border border-[var(--accent)] bg-white/80 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+                >
+                  Godes & godemichets
+                </Link>
+                <Link
+                  href="/catalogue?categorie=sextoys&souscategorie=vibromasseur"
+                  className="rounded-full border border-[var(--accent)] bg-white/80 px-5 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+                >
+                  Vibromasseurs
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-5 md:grid-cols-4 lg:grid-cols-8">
+              {pleasureFocusProducts.map((product, index) => (
+                <Link
+                  key={`pleasure-focus-${product.id}`}
+                  href={`/produit/${product.slug}`}
+                  className={`group block ${index === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+                >
+                  <div className={`relative mb-4 overflow-hidden rounded-[1.8rem] border border-white bg-white shadow-xl shadow-rose-200/40 ${index === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}>
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover transition duration-700 group-hover:scale-105"
+                      sizes={index === 0 ? "(min-width: 768px) 25vw, 50vw" : "(min-width: 1024px) 12vw, 45vw"}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent opacity-80 transition group-hover:opacity-95" />
+                    <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--accent)] backdrop-blur">
+                      {product.subcategoryLabel ?? "Plaisir"}
+                    </span>
+                    <span className="absolute bottom-4 left-4 right-4 translate-y-4 rounded-full bg-[var(--accent)] px-4 py-3 text-center text-[9px] font-bold uppercase tracking-[0.22em] text-white opacity-0 transition duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                      Voir le produit
+                    </span>
+                  </div>
+                  <h3 className="line-clamp-2 text-xs font-bold uppercase tracking-[0.14em] text-rose-900">{product.name}</h3>
+                  <p className="mt-2 text-sm font-bold text-[var(--ink)]">{product.price.toFixed(2)} EUR</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="px-8 py-14 lg:py-16">
         <div className="mx-auto max-w-[1800px]">
