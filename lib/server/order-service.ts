@@ -50,13 +50,13 @@ function drawTableHeader(doc: PDFKit.PDFDocument, y: number) {
 
 export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: BankTransferConfig) {
   const logoPath = path.join(process.cwd(), "public", "logo-nav-femme.png");
-  let hasLogo = false;
+  let logoDataUrl: string | null = null;
 
   try {
-    await fsPromises.access(logoPath);
-    hasLogo = true;
-  } catch {
-    hasLogo = false;
+    const logoBuffer = await fsPromises.readFile(logoPath);
+    logoDataUrl = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+  } catch (error) {
+    console.error("INVOICE_LOGO_LOAD_FAILED", error);
   }
 
   return new Promise<Buffer>((resolve, reject) => {
@@ -82,12 +82,8 @@ export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: Ban
 
     doc.on("error", reject);
 
-    if (hasLogo) {
-      try {
-        doc.image(logoPath, 50, 38, { fit: [120, 92] });
-      } catch {
-        // Ignore image read issues and continue without logo.
-      }
+    if (logoDataUrl) {
+      doc.image(logoDataUrl, 50, 38, { fit: [120, 92] });
     }
 
     doc
