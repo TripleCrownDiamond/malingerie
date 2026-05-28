@@ -45,11 +45,7 @@ function getCategoryIcon(slug: string) {
   return categoryIcons[slug] ?? Sparkles;
 }
 
-type SiteHeaderProps = {
-  isAdmin?: boolean;
-};
-
-export function SiteHeader({ isAdmin = false }: SiteHeaderProps) {
+export function SiteHeader() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -108,8 +104,11 @@ export function SiteHeader({ isAdmin = false }: SiteHeaderProps) {
               </Show>
 
               <Show when="signed-in">
-                <div className="flex items-center" aria-label="Mon profil">
+                <div className="flex items-center gap-3" aria-label="Mon profil">
                   <UserButton />
+                  <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-800 transition hover:text-[var(--accent)]">
+                    Dashboard
+                  </Link>
                 </div>
               </Show>
             </div>
@@ -222,8 +221,11 @@ export function SiteHeader({ isAdmin = false }: SiteHeaderProps) {
               </Show>
 
               <Show when="signed-in">
-                <div className="flex items-center" aria-label="Mon profil">
+                <div className="flex items-center gap-3" aria-label="Mon profil">
                   <UserButton />
+                  <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-800 transition hover:text-[var(--accent)]">
+                    Dashboard
+                  </Link>
                 </div>
               </Show>
 
@@ -295,13 +297,17 @@ export function SiteHeader({ isAdmin = false }: SiteHeaderProps) {
                 Checkout
               </Link>
 
-              {isAdmin ? (
-                <Show when="signed-in">
-                  <Link href="/admin" onClick={() => setMobileOpen(false)}>
-                    Dashboard admin
-                  </Link>
-                </Show>
-              ) : null}
+              <Show when="signed-out">
+                <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
+                  Connexion
+                </Link>
+              </Show>
+
+              <Show when="signed-in">
+                <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                  Dashboard
+                </Link>
+              </Show>
             </div>
           </div>
         ) : null}
