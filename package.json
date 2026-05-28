@@ -11,7 +11,9 @@
     "scrape:source": "node scripts/scrape-source-data.mjs",
     "scrape:products": "node scripts/scrape-multi-source-products.mjs",
     "scrape:multi": "node scripts/scrape-multi-source-products.mjs",
-    "scrape:espace-941": "node scripts/scrape-espace-category-941.mjs --limit=100"
+    "scrape:espace-941": "node scripts/scrape-espace-category-941.mjs --limit=100",
+    "migrate:cloudinary": "node --env-file=.env.local scripts/migrate-product-images-cloudinary.mjs --apply",
+    "backup:cloudinary": "node --env-file=.env.local scripts/migrate-product-images-cloudinary.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.4.1",

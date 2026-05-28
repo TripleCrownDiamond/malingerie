@@ -65,6 +65,15 @@ type AdminOrdersResponse = {
   error?: string;
 };
 
+type AdminImageUploadResponse = {
+  ok: boolean;
+  image?: {
+    optimizedUrl: string;
+    secureUrl: string;
+  };
+  error?: string;
+};
+
 type AdminMenu = "products" | "orders" | "bank" | "google";
 type ProductPanel = "list" | "create" | "edit";
 
@@ -218,6 +227,8 @@ export function AdminDashboard() {
   const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [isSavingBankConfig, setIsSavingBankConfig] = useState(false);
   const [isSavingGoogleConfig, setIsSavingGoogleConfig] = useState(false);
+  const [isUploadingMainImage, setIsUploadingMainImage] = useState(false);
+  const [isUploadingGalleryImages, setIsUploadingGalleryImages] = useState(false);
 
   const [productStatus, setProductStatus] = useState<string | null>(null);
   const [bankStatus, setBankStatus] = useState<string | null>(null);
@@ -441,6 +452,77 @@ export function AdminDashboard() {
       setProductsRequest({ page: 1, query: "", category: "all", limit: 25 });
     } finally {
       setIsSubmittingProduct(false);
+    }
+  }
+
+  async function uploadAdminProductImage(file: File, suffix: string) {
+    const formData = new FormData();
+    const namePart = draft.slug || draft.name || "produit";
+    formData.set("file", file);
+    formData.set("publicId", `admin/${namePart}-${suffix}-${Date.now()}`);
+
+    const response = await fetch("/api/admin/images", {
+      method: "POST",
+      body: formData,
+    });
+    const json = (await response.json()) as AdminImageUploadResponse;
+
+    if (!response.ok || !json.ok || !json.image) {
+      throw new Error(json.error ?? "Upload image impossible");
+    }
+
+    return json.image.optimizedUrl || json.image.secureUrl;
+  }
+
+  async function uploadMainProductImage(fileList: FileList | null) {
+    const file = fileList?.[0];
+    if (!file || isUploadingMainImage) {
+      return;
+    }
+
+    setIsUploadingMainImage(true);
+    setProductStatus("Upload de l'image principale vers Cloudinary...");
+
+    try {
+      const imageUrl = await uploadAdminProductImage(file, "main");
+      setDraft((prev) => ({
+        ...prev,
+        image: imageUrl,
+        gallery: Array.from(new Set([imageUrl, ...splitCsv(prev.gallery)])).join(", "),
+      }));
+      setProductStatus("Image principale envoyee et compressee sur Cloudinary.");
+    } catch (error) {
+      setProductStatus(`Erreur upload: ${error instanceof Error ? error.message : "Cloudinary indisponible"}`);
+    } finally {
+      setIsUploadingMainImage(false);
+    }
+  }
+
+  async function uploadGalleryProductImages(fileList: FileList | null) {
+    const files = Array.from(fileList ?? []);
+    if (files.length === 0 || isUploadingGalleryImages) {
+      return;
+    }
+
+    setIsUploadingGalleryImages(true);
+    setProductStatus(`Upload de ${files.length} image(s) galerie vers Cloudinary...`);
+
+    try {
+      const uploadedUrls: string[] = [];
+      for (const [index, file] of files.entries()) {
+        uploadedUrls.push(await uploadAdminProductImage(file, `gallery-${index + 1}`));
+      }
+
+      setDraft((prev) => ({
+        ...prev,
+        image: prev.image || uploadedUrls[0] || "",
+        gallery: Array.from(new Set([...splitCsv(prev.gallery), ...uploadedUrls])).join(", "),
+      }));
+      setProductStatus("Galerie envoyee et compressee sur Cloudinary.");
+    } catch (error) {
+      setProductStatus(`Erreur upload: ${error instanceof Error ? error.message : "Cloudinary indisponible"}`);
+    } finally {
+      setIsUploadingGalleryImages(false);
     }
   }
 
@@ -814,8 +896,18 @@ export function AdminDashboard() {
 
                 <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Description courte *</span><input value={draft.shortDescription} onChange={(event) => setDraft((prev) => ({ ...prev, shortDescription: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" required /></label>
                 <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Description longue *</span><textarea value={draft.longDescription} onChange={(event) => setDraft((prev) => ({ ...prev, longDescription: event.target.value }))} rows={4} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" required /></label>
-                <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Image principale URL *</span><input type="url" value={draft.image} onChange={(event) => setDraft((prev) => ({ ...prev, image: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" required /></label>
-                <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Galerie URLs (virgule)</span><input value={draft.gallery} onChange={(event) => setDraft((prev) => ({ ...prev, gallery: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
+                <label className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
+                  <span>Image principale *</span>
+                  <input type="file" accept="image/*" onChange={(event) => uploadMainProductImage(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
+                  {draft.image ? <p className="break-all rounded-xl bg-rose-50 px-4 py-3 text-xs text-[var(--muted)]">Image Cloudinary: {draft.image}</p> : null}
+                  {isUploadingMainImage ? <p className="text-xs uppercase tracking-[0.16em] text-[var(--accent)]">Upload en cours...</p> : null}
+                </label>
+                <label className="space-y-3 text-sm text-[var(--muted)] sm:col-span-2">
+                  <span>Galerie produit</span>
+                  <input type="file" accept="image/*" multiple onChange={(event) => uploadGalleryProductImages(event.target.files)} className="w-full rounded-xl border border-dashed border-[var(--line)] bg-white px-4 py-3 outline-none file:mr-4 file:rounded-full file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-[0.18em] file:text-[var(--paper)] focus:border-[var(--accent)]" />
+                  {draft.gallery ? <p className="break-all rounded-xl bg-rose-50 px-4 py-3 text-xs text-[var(--muted)]">Galerie Cloudinary: {draft.gallery}</p> : null}
+                  {isUploadingGalleryImages ? <p className="text-xs uppercase tracking-[0.16em] text-[var(--accent)]">Upload galerie en cours...</p> : null}
+                </label>
 
                 <label className="space-y-2 text-sm text-[var(--muted)]"><span>Tags (virgule)</span><input value={draft.tags} onChange={(event) => setDraft((prev) => ({ ...prev, tags: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
                 <label className="space-y-2 text-sm text-[var(--muted)]"><span>SKU</span><input value={draft.sku} onChange={(event) => setDraft((prev) => ({ ...prev, sku: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
@@ -824,7 +916,7 @@ export function AdminDashboard() {
                 <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Tailles (virgule)</span><input value={draft.sizes} onChange={(event) => setDraft((prev) => ({ ...prev, sizes: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
 
                 <div className="sm:col-span-2">
-                  <button type="submit" disabled={isSubmittingProduct} className="rounded-full bg-[var(--ink)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-70">
+                  <button type="submit" disabled={isSubmittingProduct || isUploadingMainImage || isUploadingGalleryImages} className="rounded-full bg-[var(--ink)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-70">
                     {isSubmittingProduct ? (editingProductId ? "Modification..." : "Ajout en cours...") : editingProductId ? "Enregistrer les modifications" : "Ajouter ce produit"}
                   </button>
                 </div>
