@@ -11,7 +11,6 @@ import {
   Heart,
   Leaf,
   Menu,
-  Percent,
   Search,
   Shield,
   Shirt,
@@ -21,8 +20,8 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { type FormEvent, useState, useSyncExternalStore, useTransition } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, type FormEvent, useState, useSyncExternalStore, useTransition } from "react";
 
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { sourceMenuLinks } from "@/features/source/data/source-data";
@@ -30,7 +29,6 @@ import { resolveSourceMenuHref } from "@/features/source/lib/navigation";
 import { useWishlistStore } from "@/features/wishlist/store/wishlist-store";
 
 const categoryIcons: Record<string, LucideIcon> = {
-  promotions: Percent,
   sextoys: Sparkles,
   lingerie: Shirt,
   bdsm: Shield,
@@ -45,9 +43,10 @@ function getCategoryIcon(slug: string) {
   return categoryIcons[slug] ?? Sparkles;
 }
 
-export function SiteHeader() {
+function SiteHeaderContent() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,8 +69,9 @@ export function SiteHeader() {
     const currentPath = pathname.replace(/\/$/, "") || "/";
     const hrefPath = href.split("?")[0].replace(/\/$/, "") || "/";
     const categoryPagePath = `/${slug}`;
+    const currentCategory = searchParams.get("categorie");
 
-    return currentPath === hrefPath || currentPath === categoryPagePath;
+    return currentPath === hrefPath || currentPath === categoryPagePath || (currentPath === "/catalogue" && currentCategory === slug);
   }
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -177,7 +177,7 @@ export function SiteHeader() {
           ) : null}
 
           <div className="hidden items-center justify-center gap-7 pb-4 pt-3 text-[11px] font-bold uppercase tracking-[0.12em] lg:flex">
-            {sourceMenuLinks.map((item) => {
+            {sourceMenuLinks.filter((item) => item.slug !== "promotions").map((item) => {
               const Icon = getCategoryIcon(item.slug);
 
               const resolvedHref = resolveSourceMenuHref(item.slug, item.href);
@@ -279,7 +279,7 @@ export function SiteHeader() {
             </form>
 
             <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-[0.2em] text-gray-700">
-              {sourceMenuLinks.map((item) => {
+              {sourceMenuLinks.filter((item) => item.slug !== "promotions").map((item) => {
                 const Icon = getCategoryIcon(item.slug);
 
                 const resolvedHref = resolveSourceMenuHref(item.slug, item.href);
@@ -336,5 +336,13 @@ export function SiteHeader() {
         ) : null}
       </header>
     </>
+  );
+}
+
+export function SiteHeader() {
+  return (
+    <Suspense fallback={null}>
+      <SiteHeaderContent />
+    </Suspense>
   );
 }

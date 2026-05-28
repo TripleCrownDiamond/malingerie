@@ -31,7 +31,6 @@ const featuredOrder = [
   "bdsm",
   "aphrodisiaques",
   "jeux-et-librairie",
-  "promotions",
 ];
 
 const featuredLabelBySlug: Record<string, string> = {
@@ -41,7 +40,6 @@ const featuredLabelBySlug: Record<string, string> = {
   bdsm: "BDSM",
   aphrodisiaques: "Aphrodisiaques",
   "jeux-et-librairie": "Jeux et librairie",
-  promotions: "Promotions",
 };
 
 const fallbackFeaturedImageBySlug = new Map(sourceFeaturedCategories.map((item) => [item.slug, item.image] as const));
