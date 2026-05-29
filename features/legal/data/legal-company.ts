@@ -35,7 +35,7 @@ export const legalHost = {
 
 export const legalPages = [
   { href: "/mentions-legales", label: "Mentions legales" },
-  { href: "/cgu-cgv", label: "CGU et CGV" },
-  { href: "/politique-confidentialite", label: "Confidentialite" },
-  { href: "/politique-cookies", label: "Cookies" },
+  { href: "/cgu-cgv", label: "CGU / CGV / Retours" },
+  { href: "/politique-confidentialite", label: "Politique de confidentialite" },
+  { href: "/politique-cookies", label: "Politique cookies" },
 ] as const;

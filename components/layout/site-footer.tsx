@@ -17,6 +17,8 @@ const assistanceLinks = [
   { label: "Expedition express", href: "/expedition-express" },
   { label: "Paiement securise", href: "/paiement-securise" },
   { label: "Livraison discrete", href: "/livraison-discrete" },
+  { label: "Retours et remboursements", href: "/cgu-cgv#retours-remboursements" },
+  { label: "Garanties legales", href: "/cgu-cgv#garanties-legales" },
   { label: "Nous contacter", href: "/nous-contacter" },
 ];
 
@@ -24,14 +26,14 @@ const maisonLinks = [
   { label: "Notre histoire", href: "/notre-histoire" },
   { label: "Conseils et guides", href: "/conseils" },
   { label: "Mentions legales", href: "/mentions-legales" },
-  { label: "CGU et CGV", href: "/cgu-cgv" },
-  { label: "Confidentialite", href: "/politique-confidentialite" },
-  { label: "Cookies", href: "/politique-cookies" },
+  { label: "Conditions generales", href: "/cgu-cgv" },
+  { label: "Politique de confidentialite", href: "/politique-confidentialite" },
+  { label: "Politique cookies", href: "/politique-cookies" },
 ];
 
 function isFooterLinkActive(pathname: string, href: string) {
   const currentPath = pathname.replace(/\/$/, "") || "/";
-  const hrefPath = href.replace(/\/$/, "") || "/";
+  const hrefPath = href.split("#")[0].replace(/\/$/, "") || "/";
 
   if (hrefPath === "/") {
     return currentPath === "/";
@@ -143,3 +145,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+

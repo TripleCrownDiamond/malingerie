@@ -73,6 +73,35 @@ export default function MentionsLegalesPage() {
             </p>
           </section>
 
+
+          <section className="space-y-3 border-t border-[var(--line)] pt-6">
+            <h2 className="font-display text-3xl text-[var(--ink)]">Acces au site</h2>
+            <p>
+              Le site est accessible sous reserve des interruptions necessaires a la maintenance, a la securite, aux mises a jour ou a tout incident technique
+              independant de la volonte de l&apos;editeur. L&apos;editeur peut modifier, suspendre ou retirer une fonctionnalite afin d&apos;ameliorer le service ou de proteger les utilisateurs.
+            </p>
+          </section>
+
+          <section className="space-y-3 border-t border-[var(--line)] pt-6">
+            <h2 className="font-display text-3xl text-[var(--ink)]">Service client et reclamations</h2>
+            <p>
+              Pour toute question relative a une commande, une facture, une livraison, un retour, un remboursement ou une garantie, le client peut contacter
+              le service client a <a className="underline" href={`mailto:${legalContact.email}`}>{legalContact.email}</a> en indiquant la reference de commande lorsque disponible.
+            </p>
+            <p>
+              Les demandes doivent contenir les informations utiles au traitement: nom, email de commande, produit concerne, description du probleme,
+              photos en cas de colis endommage ou produit defectueux, et solution souhaitee lorsque cela est pertinent.
+            </p>
+          </section>
+
+          <section className="space-y-3 border-t border-[var(--line)] pt-6">
+            <h2 className="font-display text-3xl text-[var(--ink)]">Donnees personnelles et cookies</h2>
+            <p>
+              Les modalites de traitement des donnees personnelles sont detaillees dans la <Link className="underline" href="/politique-confidentialite">politique de confidentialite</Link>.
+              Les cookies et traceurs sont presentes dans la <Link className="underline" href="/politique-cookies">politique cookies</Link>.
+            </p>
+          </section>
+
           <section className="space-y-3 border-t border-[var(--line)] pt-6">
             <h2 className="font-display text-3xl text-[var(--ink)]">Sources et mises a jour</h2>
             <p>
