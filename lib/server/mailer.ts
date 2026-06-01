@@ -355,6 +355,13 @@ export async function sendInvoiceEmail(input: SendInvoiceEmailInput): Promise<Se
     return resendResult;
   }
 
+  if (smtpResult.status === "failed") {
+    return {
+      ...smtpResult,
+      error: `${resendResult.error || "RESEND_SKIPPED"}; SMTP_FAILED: ${smtpResult.error || "SMTP_SEND_FAILED"}`,
+    };
+  }
+
   return smtpResult;
 }
 

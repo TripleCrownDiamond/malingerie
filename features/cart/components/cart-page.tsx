@@ -34,6 +34,10 @@ type CompletedOrder = {
   customer: CustomerForm;
   items: CartItem[];
   emailStatus: "sent" | "skipped" | "failed";
+  emailError?: string;
+  emailProvider?: "resend" | "smtp";
+  customerEmailMessageId?: string;
+  adminEmailMessageId?: string;
 };
 
 const checkoutSteps: Array<{ id: CheckoutStep; label: string }> = [
@@ -304,6 +308,17 @@ export function CartPage() {
           <p className="mt-2">
             Envoi email client: {completedOrder.emailStatus === "sent" ? "envoye" : completedOrder.emailStatus === "skipped" ? "non configure" : "echec"}
           </p>
+          {completedOrder.emailProvider || completedOrder.emailError ? (
+            <p className="mt-1 break-words text-xs text-[var(--muted)]">
+              {completedOrder.emailProvider ? `Service: ${completedOrder.emailProvider}. ` : null}
+              {completedOrder.emailError ? `Erreur: ${completedOrder.emailError}` : null}
+            </p>
+          ) : null}
+          {completedOrder.customerEmailMessageId || completedOrder.adminEmailMessageId ? (
+            <p className="mt-1 break-words text-xs text-[var(--muted)]">
+              ID client: {completedOrder.customerEmailMessageId ?? "-"} | ID admin: {completedOrder.adminEmailMessageId ?? "-"}
+            </p>
+          ) : null}
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
@@ -705,3 +720,5 @@ export function CartPage() {
     </div>
   );
 }
+
+
