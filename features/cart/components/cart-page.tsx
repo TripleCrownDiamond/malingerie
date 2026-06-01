@@ -36,6 +36,10 @@ type CompletedOrder = {
   emailStatus: "sent" | "skipped" | "failed";
   emailError?: string;
   emailProvider?: "resend" | "smtp";
+  customerEmailStatus?: "sent" | "skipped" | "failed";
+  adminEmailStatus?: "sent" | "skipped" | "failed";
+  customerEmailError?: string;
+  adminEmailError?: string;
   customerEmailMessageId?: string;
   adminEmailMessageId?: string;
 };
@@ -309,10 +313,12 @@ export function CartPage() {
             Envoi email client: {completedOrder.emailStatus === "sent" ? "envoye" : completedOrder.emailStatus === "skipped" ? "non configure" : "echec"}
           </p>
           {completedOrder.emailProvider || completedOrder.emailError ? (
-            <p className="mt-1 break-words text-xs text-[var(--muted)]">
-              {completedOrder.emailProvider ? `Service: ${completedOrder.emailProvider}. ` : null}
-              {completedOrder.emailError ? `Erreur: ${completedOrder.emailError}` : null}
-            </p>
+            <div className="mt-2 space-y-1 break-words text-xs text-[var(--muted)]">
+              {completedOrder.emailProvider ? <p>Service: {completedOrder.emailProvider}</p> : null}
+              <p>Client: {completedOrder.customerEmailStatus ?? completedOrder.emailStatus}{completedOrder.customerEmailError ? ` - ${completedOrder.customerEmailError}` : null}</p>
+              <p>Admin: {completedOrder.adminEmailStatus ?? completedOrder.emailStatus}{completedOrder.adminEmailError ? ` - ${completedOrder.adminEmailError}` : null}</p>
+              {completedOrder.emailError ? <p>Detail: {completedOrder.emailError}</p> : null}
+            </div>
           ) : null}
           {completedOrder.customerEmailMessageId || completedOrder.adminEmailMessageId ? (
             <p className="mt-1 break-words text-xs text-[var(--muted)]">

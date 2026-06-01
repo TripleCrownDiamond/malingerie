@@ -1007,7 +1007,7 @@ export function AdminDashboard() {
                       <td className="px-2 py-3">{order.total.toFixed(2)} EUR</td>
                       <td className="px-2 py-3">{order.status}</td>
                       <td className="px-2 py-3">{order.paymentMethod}</td>
-                      <td className="px-2 py-3"><p className="font-semibold text-[var(--ink)]">{order.emailStatus}</p><p className="max-w-[220px] truncate text-xs text-[var(--muted)]" title={order.emailError || order.customerEmailMessageId || order.adminEmailMessageId || ""}>{order.emailError || order.emailProvider || "-"}</p></td>
+                      <td className="px-2 py-3"><p className="font-semibold text-[var(--ink)]">Client: {order.customerEmailStatus ?? order.emailStatus}</p><p className="font-semibold text-[var(--ink)]">Admin: {order.adminEmailStatus ?? order.emailStatus}</p><p className="max-w-[260px] truncate text-xs text-[var(--muted)]" title={order.emailError || order.customerEmailError || order.adminEmailError || order.customerEmailMessageId || order.adminEmailMessageId || ""}>{order.emailError || order.customerEmailError || order.adminEmailError || order.emailProvider || "-"}</p></td>
                       <td className="px-2 py-3"><a href={order.invoiceUrl} target="_blank" rel="noreferrer" className="text-[var(--accent)] underline">Ouvrir</a></td>
                     </tr>
                   ))
