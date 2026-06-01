@@ -298,6 +298,10 @@ export async function createOrder(input: CreateOrderInput) {
   order.emailStatus = emailResult.status;
   order.emailError = emailResult.error;
   order.emailProvider = emailResult.provider;
+  order.customerEmailStatus = emailResult.customerStatus;
+  order.adminEmailStatus = emailResult.adminStatus;
+  order.customerEmailError = emailResult.customerError;
+  order.adminEmailError = emailResult.adminError;
   order.customerEmailMessageId = emailResult.customerMessageId;
   order.adminEmailMessageId = emailResult.adminMessageId;
 
@@ -306,6 +310,10 @@ export async function createOrder(input: CreateOrderInput) {
     status: emailResult.status,
     provider: emailResult.provider,
     error: emailResult.error,
+    customerStatus: emailResult.customerStatus,
+    adminStatus: emailResult.adminStatus,
+    customerError: emailResult.customerError,
+    adminError: emailResult.adminError,
     customerMessageId: emailResult.customerMessageId,
     adminMessageId: emailResult.adminMessageId,
   });
