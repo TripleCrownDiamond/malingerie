@@ -6,7 +6,7 @@ import PDFDocument from "pdfkit/js/pdfkit.standalone";
 
 import { legalCompanyProfile, legalContact } from "@/features/legal/data/legal-company";
 import { readBankTransferConfig, readOrders, writeOrders } from "@/lib/server/config-store";
-import { sendInvoiceEmail } from "@/lib/server/mailer";
+import { sendInvoiceEmail, type SendInvoiceEmailResult } from "@/lib/server/mailer";
 import type { BankTransferConfig } from "@/types/admin";
 import type { OrderCustomer, OrderDeliveryMethod, OrderPaymentMethod, OrderRecord } from "@/types/order";
 import type { CartItem } from "@/types/shop";
@@ -290,13 +290,25 @@ export async function createOrder(input: CreateOrderInput) {
       invoiceUrl,
       total: order.total,
     }),
-    new Promise<{ status: "failed"; error: string }>((resolve) => {
-      setTimeout(() => resolve({ status: "failed", error: "EMAIL_TIMEOUT" }), 8000);
+    new Promise<SendInvoiceEmailResult>((resolve) => {
+      setTimeout(() => resolve({ status: "failed", error: "EMAIL_TIMEOUT" }), 20000);
     }),
   ]);
 
   order.emailStatus = emailResult.status;
   order.emailError = emailResult.error;
+  order.emailProvider = emailResult.provider;
+  order.customerEmailMessageId = emailResult.customerMessageId;
+  order.adminEmailMessageId = emailResult.adminMessageId;
+
+  console.info("ORDER_EMAIL_RESULT", {
+    reference: order.reference,
+    status: emailResult.status,
+    provider: emailResult.provider,
+    error: emailResult.error,
+    customerMessageId: emailResult.customerMessageId,
+    adminMessageId: emailResult.adminMessageId,
+  });
 
   try {
     await writeOrders(orders);
@@ -306,3 +318,5 @@ export async function createOrder(input: CreateOrderInput) {
 
   return order;
 }
+
+

@@ -3,6 +3,9 @@ import { z } from "zod";
 
 import { createOrder } from "@/lib/server/order-service";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 const createOrderSchema = z.object({
   customer: z.object({
     fullName: z.string().min(2),
@@ -66,3 +69,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Impossible d'enregistrer la commande" }, { status: 500 });
   }
 }
+

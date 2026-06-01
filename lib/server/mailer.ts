@@ -11,9 +11,12 @@ type SendInvoiceEmailInput = {
   total: number;
 };
 
-type SendInvoiceEmailResult = {
+export type SendInvoiceEmailResult = {
   status: "sent" | "skipped" | "failed";
   error?: string;
+  provider?: "resend" | "smtp";
+  customerMessageId?: string;
+  adminMessageId?: string;
 };
 
 type BuiltEmail = {
@@ -181,42 +184,78 @@ async function sendViaResend({
 }): Promise<SendInvoiceEmailResult> {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    return { status: "skipped", error: "RESEND_NON_CONFIGURE" };
+    console.warn("EMAIL_RESEND_SKIPPED", { reason: "RESEND_NON_CONFIGURE" });
+    return { status: "skipped", error: "RESEND_NON_CONFIGURE", provider: "resend" };
   }
 
   const email = buildEmailPayload(input);
   const resend = new Resend(resendApiKey);
 
   try {
-    const customerResult = await resend.emails.send({
-      from: email.from,
+    console.info("EMAIL_RESEND_ATTEMPT", {
       to: input.to,
-      subject: email.customerSubject,
-      text: email.customerText,
-      html: email.customerHtml,
+      adminNotificationEmail,
+      from: email.from,
+      reference: input.reference,
     });
+
+    const [customerResult, adminResult] = await Promise.all([
+      resend.emails.send({
+        from: email.from,
+        to: input.to,
+        subject: email.customerSubject,
+        text: email.customerText,
+        html: email.customerHtml,
+      }),
+      resend.emails.send({
+        from: email.from,
+        to: adminNotificationEmail,
+        subject: email.adminSubject,
+        text: email.adminText,
+        html: email.adminHtml,
+      }),
+    ]);
 
     if (customerResult.error) {
-      return { status: "failed", error: customerResult.error.message || "RESEND_CUSTOMER_SEND_FAILED" };
+      console.error("EMAIL_RESEND_CUSTOMER_FAILED", customerResult.error);
+      return {
+        status: "failed",
+        error: customerResult.error.message || "RESEND_CUSTOMER_SEND_FAILED",
+        provider: "resend",
+      };
     }
 
-    const adminResult = await resend.emails.send({
-      from: email.from,
-      to: adminNotificationEmail,
-      subject: email.adminSubject,
-      text: email.adminText,
-      html: email.adminHtml,
-    });
+    const customerMessageId = customerResult.data?.id;
+    const adminMessageId = adminResult.data?.id;
 
     if (adminResult.error) {
-      return { status: "sent", error: `ADMIN_NOTIFICATION_FAILED: ${adminResult.error.message || "RESEND_ADMIN_SEND_FAILED"}` };
+      console.error("EMAIL_RESEND_ADMIN_FAILED", adminResult.error);
+      return {
+        status: "sent",
+        error: `ADMIN_NOTIFICATION_FAILED: ${adminResult.error.message || "RESEND_ADMIN_SEND_FAILED"}`,
+        provider: "resend",
+        customerMessageId,
+      };
     }
 
-    return { status: "sent" };
+    console.info("EMAIL_RESEND_SENT", {
+      reference: input.reference,
+      customerMessageId,
+      adminMessageId,
+    });
+
+    return {
+      status: "sent",
+      provider: "resend",
+      customerMessageId,
+      adminMessageId,
+    };
   } catch (error) {
+    console.error("EMAIL_RESEND_FAILED", error);
     return {
       status: "failed",
       error: error instanceof Error ? error.message : "RESEND_SEND_FAILED",
+      provider: "resend",
     };
   }
 }
@@ -235,7 +274,8 @@ async function sendViaSmtp({
   const from = process.env.SMTP_FROM || user;
 
   if (!host || !port || !user || !pass || !from) {
-    return { status: "skipped", error: "SMTP_NON_CONFIGURE" };
+    console.warn("EMAIL_SMTP_SKIPPED", { reason: "SMTP_NON_CONFIGURE" });
+    return { status: "skipped", error: "SMTP_NON_CONFIGURE", provider: "smtp" };
   }
 
   const email = buildEmailPayload(input);
@@ -277,12 +317,13 @@ async function sendViaSmtp({
     }
 
     return adminError
-      ? { status: "sent", error: `ADMIN_NOTIFICATION_FAILED: ${adminError}` }
-      : { status: "sent" };
+      ? { status: "sent", error: `ADMIN_NOTIFICATION_FAILED: ${adminError}`, provider: "smtp" }
+      : { status: "sent", provider: "smtp" };
   } catch (error) {
     return {
       status: "failed",
       error: error instanceof Error ? error.message : "EMAIL_SEND_FAILED",
+      provider: "smtp",
     };
   }
 }
@@ -316,3 +357,6 @@ export async function sendInvoiceEmail(input: SendInvoiceEmailInput): Promise<Se
 
   return smtpResult;
 }
+
+
+

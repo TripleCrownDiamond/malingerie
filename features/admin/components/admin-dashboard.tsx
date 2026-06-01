@@ -990,14 +990,15 @@ export function AdminDashboard() {
                   <th className="px-2 py-3">Total</th>
                   <th className="px-2 py-3">Statut</th>
                   <th className="px-2 py-3">Paiement</th>
+                  <th className="px-2 py-3">Email</th>
                   <th className="px-2 py-3">Facture</th>
                 </tr>
               </thead>
               <tbody>
                 {isOrdersLoading ? (
-                  <tr><td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={6}>Chargement des commandes...</td></tr>
+                  <tr><td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={7}>Chargement des commandes...</td></tr>
                 ) : ordersItems.length === 0 ? (
-                  <tr><td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={6}>Aucune commande trouvee.</td></tr>
+                  <tr><td className="px-2 py-4 text-sm text-[var(--muted)]" colSpan={7}>Aucune commande trouvee.</td></tr>
                 ) : (
                   ordersItems.map((order) => (
                     <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
@@ -1006,6 +1007,7 @@ export function AdminDashboard() {
                       <td className="px-2 py-3">{order.total.toFixed(2)} EUR</td>
                       <td className="px-2 py-3">{order.status}</td>
                       <td className="px-2 py-3">{order.paymentMethod}</td>
+                      <td className="px-2 py-3"><p className="font-semibold text-[var(--ink)]">{order.emailStatus}</p><p className="max-w-[220px] truncate text-xs text-[var(--muted)]" title={order.emailError || order.customerEmailMessageId || order.adminEmailMessageId || ""}>{order.emailError || order.emailProvider || "-"}</p></td>
                       <td className="px-2 py-3"><a href={order.invoiceUrl} target="_blank" rel="noreferrer" className="text-[var(--accent)] underline">Ouvrir</a></td>
                     </tr>
                   ))

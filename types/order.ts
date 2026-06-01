@@ -30,4 +30,8 @@ export type OrderRecord = {
   total: number;
   emailStatus: OrderEmailStatus;
   emailError?: string;
+  emailProvider?: "resend" | "smtp";
+  customerEmailMessageId?: string;
+  adminEmailMessageId?: string;
 };
+
