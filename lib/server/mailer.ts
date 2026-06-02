@@ -96,7 +96,7 @@ function buildEmailPayload({
   total,
 }: SendInvoiceEmailInput): BuiltEmail {
   const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || legalCompanyProfile.website);
-  const logoUrl = `${siteUrl}/logo-ma-petite-lingerie.png`;
+  const logoUrl = `${siteUrl}/api/images/email-logo`;
   const safeCustomerName = escapeHtml(customerName);
   const safeReference = escapeHtml(reference);
   const safeInvoiceUrl = escapeHtml(invoiceUrl);
@@ -123,7 +123,7 @@ function buildEmailPayload({
   const customerHtml = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#1a1a1a;max-width:680px;margin:0 auto;">
       <div style="padding:16px 0 8px;text-align:center;">
-        <img src="${logoUrl}" alt="Ma Petite Lingerie" style="max-width:140px;height:auto;display:inline-block;" />
+        <img src="${logoUrl}" alt="Ma Petite Lingerie" width="120" style="width:120px;max-width:120px;height:auto;display:block;margin:0 auto;" />
       </div>
       <div style="border:1px solid #f1d8e3;border-radius:16px;padding:20px;background:#ffffff;">
         <h2 style="margin:0 0 8px;color:#1a1a1a;">Merci pour votre commande</h2>
@@ -154,7 +154,7 @@ function buildEmailPayload({
   const adminHtml = `
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#1a1a1a;max-width:680px;margin:0 auto;">
       <div style="padding:16px 0 8px;text-align:center;">
-        <img src="${logoUrl}" alt="Ma Petite Lingerie" style="max-width:120px;height:auto;display:inline-block;" />
+        <img src="${logoUrl}" alt="Ma Petite Lingerie" width="110" style="width:110px;max-width:110px;height:auto;display:block;margin:0 auto;" />
       </div>
       <div style="border:1px solid #f1d8e3;border-radius:16px;padding:20px;background:#ffffff;">
         <h2 style="margin:0 0 10px;color:#1a1a1a;">Notification admin - nouvelle commande</h2>
@@ -190,7 +190,6 @@ async function sendViaResend({
 }): Promise<SendInvoiceEmailResult> {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    console.warn("EMAIL_RESEND_SKIPPED", { reason: "RESEND_NON_CONFIGURE" });
     return {
       status: "skipped",
       error: "RESEND_NON_CONFIGURE",
@@ -206,13 +205,6 @@ async function sendViaResend({
   const resend = new Resend(resendApiKey);
 
   try {
-    console.info("EMAIL_RESEND_ATTEMPT", {
-      to: input.to,
-      adminNotificationEmail,
-      from: email.from,
-      reference: input.reference,
-    });
-
     const [customerResult, adminResult] = await Promise.allSettled([
       resend.emails.send({
         from: email.from,
@@ -247,23 +239,6 @@ async function sendViaResend({
       adminError ? `ADMIN: ${adminError}` : null,
     ].filter(Boolean).join("; ") || undefined;
 
-    if (customerError) {
-      console.error("EMAIL_RESEND_CUSTOMER_FAILED", customerError);
-    }
-
-    if (adminError) {
-      console.error("EMAIL_RESEND_ADMIN_FAILED", adminError);
-    }
-
-    console.info("EMAIL_RESEND_RESULT", {
-      reference: input.reference,
-      customerStatus,
-      adminStatus,
-      customerMessageId,
-      adminMessageId,
-      error,
-    });
-
     return {
       status,
       error,
@@ -276,7 +251,6 @@ async function sendViaResend({
       adminMessageId,
     };
   } catch (error) {
-    console.error("EMAIL_RESEND_FAILED", error);
     const message = error instanceof Error ? error.message : "RESEND_SEND_FAILED";
     return {
       status: "failed",
@@ -304,7 +278,6 @@ async function sendViaSmtp({
   const from = process.env.SMTP_FROM || user;
 
   if (!host || !port || !user || !pass || !from) {
-    console.warn("EMAIL_SMTP_SKIPPED", { reason: "SMTP_NON_CONFIGURE" });
     return {
       status: "skipped",
       error: "SMTP_NON_CONFIGURE",
@@ -362,21 +335,6 @@ async function sendViaSmtp({
     adminError ? `ADMIN: ${adminError}` : null,
   ].filter(Boolean).join("; ") || undefined;
 
-  if (customerError) {
-    console.error("EMAIL_SMTP_CUSTOMER_FAILED", customerError);
-  }
-
-  if (adminError) {
-    console.error("EMAIL_SMTP_ADMIN_FAILED", adminError);
-  }
-
-  console.info("EMAIL_SMTP_RESULT", {
-    reference: input.reference,
-    customerStatus,
-    adminStatus,
-    error,
-  });
-
   return {
     status,
     error,
@@ -424,6 +382,7 @@ export async function sendInvoiceEmail(input: SendInvoiceEmailInput): Promise<Se
 
   return smtpResult;
 }
+
 
 
 

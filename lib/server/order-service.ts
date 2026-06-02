@@ -55,8 +55,8 @@ export async function createInvoicePdfBuffer(order: OrderRecord, bankConfig: Ban
   try {
     const logoBuffer = await fsPromises.readFile(logoPath);
     logoDataUrl = `data:image/png;base64,${logoBuffer.toString("base64")}`;
-  } catch (error) {
-    console.error("INVOICE_LOGO_LOAD_FAILED", error);
+  } catch {
+    logoDataUrl = null;
   }
 
   return new Promise<Buffer>((resolve, reject) => {
@@ -305,23 +305,11 @@ export async function createOrder(input: CreateOrderInput) {
   order.customerEmailMessageId = emailResult.customerMessageId;
   order.adminEmailMessageId = emailResult.adminMessageId;
 
-  console.info("ORDER_EMAIL_RESULT", {
-    reference: order.reference,
-    status: emailResult.status,
-    provider: emailResult.provider,
-    error: emailResult.error,
-    customerStatus: emailResult.customerStatus,
-    adminStatus: emailResult.adminStatus,
-    customerError: emailResult.customerError,
-    adminError: emailResult.adminError,
-    customerMessageId: emailResult.customerMessageId,
-    adminMessageId: emailResult.adminMessageId,
-  });
 
   try {
     await writeOrders(orders);
-  } catch (error) {
-    console.error("ORDER_EMAIL_STATUS_UPDATE_FAILED", error);
+  } catch {
+    // The order is already created; keep checkout successful if only status persistence retry fails.
   }
 
   return order;

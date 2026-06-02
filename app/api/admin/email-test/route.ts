@@ -35,7 +35,5 @@ export async function POST(request: Request) {
     total: 1,
   });
 
-  console.info("ADMIN_EMAIL_TEST_RESULT", { to, result });
-
   return NextResponse.json({ ok: result.status === "sent", to, result });
 }
