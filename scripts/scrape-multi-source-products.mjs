@@ -73,7 +73,7 @@ function decodeEntities(input) {
 }
 
 function repairMojibake(value) {
-  if (!/[ÃÂ]/.test(value)) {
+  if (!/[ï¿½ï¿½]/.test(value)) {
     return value;
   }
 
@@ -508,6 +508,19 @@ function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 
+function normalizeSourcePrice(value, source) {
+  const price = Number(value);
+  if (!Number.isFinite(price)) return price;
+
+  // Maison Lejaby fr-bj can expose prices in XOF/CFA through Shopify JSON-LD.
+  // Convert obvious XOF amounts back to EUR before writing product data.
+  if (source === "maison-lejaby" && price >= 1000) {
+    return Number((price / 655.957).toFixed(2));
+  }
+
+  return Number(price.toFixed(2));
+}
+
 function chooseBestOffer(node) {
   const offers = [];
 
@@ -547,8 +560,9 @@ function parseEnrichedProduct(record, html) {
   if (!node) return null;
 
   const offer = chooseBestOffer(node);
-  const price = offer?.price ?? parseNumeric(node?.offers?.price);
-  if (!Number.isFinite(price ?? Number.NaN)) return null;
+  const rawPrice = offer?.price ?? parseNumeric(node?.offers?.price);
+  if (!Number.isFinite(rawPrice ?? Number.NaN)) return null;
+  const price = normalizeSourcePrice(rawPrice, record.source);
 
   const name = cleanText(node?.name) || buildFallbackProduct(record).name;
   const categorySlug = inferCategorySlug({ source: record.source, url: record.url, name, description: cleanText(node?.description) });
@@ -564,8 +578,8 @@ function parseEnrichedProduct(record, html) {
     categorySlug,
     shortDescription: cleanText(node?.category ?? node?.productType ?? "") || undefined,
     longDescription: cleanText(node?.description) || undefined,
-    price: Number(price.toFixed(2)),
-    compareAtPrice: Number.isFinite(offer?.highPrice ?? Number.NaN) && offer.highPrice > price ? Number(offer.highPrice.toFixed(2)) : undefined,
+    price,
+    compareAtPrice: Number.isFinite(offer?.highPrice ?? Number.NaN) && normalizeSourcePrice(offer.highPrice, record.source) > price ? normalizeSourcePrice(offer.highPrice, record.source) : undefined,
     rating: Number((parseNumeric(node?.aggregateRating?.ratingValue) ?? 4.5).toFixed(2)),
     reviewCount: parseInteger(node?.aggregateRating?.reviewCount) ?? 0,
     stock: /instock/i.test(String(offer?.availability ?? "")) ? 24 : 0,
