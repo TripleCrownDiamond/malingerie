@@ -137,8 +137,12 @@ export const assistancePages = {
   "nous-contacter": {
     eyebrow: "Assistance",
     title: "Nous contacter",
-    description: "Une question sur une commande, un produit, une facture, un retour, une garantie ou une information legale ? L'equipe peut etre contactee par email.",
+    description: "Une question sur une commande, un produit, une facture, un retour, une garantie ou une information legale ? L'equipe peut etre contactee par email ou par telephone.",
     sections: [
+      {
+        title: "Telephone",
+        body: "Tu peux nous joindre au +33 6 30 88 35 29 du lundi au vendredi de 9h a 18h.",
+      },
       {
         title: "Email client",
         body: "Pour toute demande, ecris a contact@ma-petite-lingerie.com en indiquant si possible la reference de commande. Une demande complete permet un traitement plus rapide.",

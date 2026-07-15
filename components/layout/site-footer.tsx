@@ -76,6 +76,9 @@ export function SiteFooter() {
               <Link href="#" className="hover:text-[var(--accent)]">Pinterest</Link>
               <Link href="#" className="hover:text-[var(--accent)]">Facebook</Link>
             </div>
+            <div className="flex items-center gap-3 text-sm text-rose-900">
+              <a href="tel:+33630883529" className="hover:text-[var(--accent)]">+33 6 30 88 35 29</a>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -137,8 +140,7 @@ export function SiteFooter() {
           <div className="flex items-center gap-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500">
             <span>Visa</span>
             <span>Mastercard</span>
-            <span>Stripe</span>
-            <span>Apple Pay</span>
+            <span>Virement bancaire</span>
           </div>
         </div>
       </div>

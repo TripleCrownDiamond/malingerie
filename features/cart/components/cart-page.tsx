@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, CreditCard, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useCartStore } from "@/features/cart/store/cart-store";
@@ -11,7 +10,7 @@ import type { CartItem } from "@/types/shop";
 
 type CheckoutStep = "panier" | "informations" | "paiement";
 type DeliveryMethod = "standard" | "express";
-type PaymentMethod = "bank_transfer" | "card";
+type PaymentMethod = "bank_transfer";
 
 type CustomerForm = {
   fullName: string;
@@ -220,11 +219,6 @@ export function CartPage() {
       return;
     }
 
-    if (paymentMethod === "card") {
-      setError("Le paiement par carte est temporairement indisponible. Merci de choisir le virement bancaire.");
-      return;
-    }
-
     if (!bankConfig.enabled) {
       setError("Le virement bancaire est desactive. Active-le dans la configuration admin.");
       return;
@@ -274,6 +268,11 @@ export function CartPage() {
         <p className="mt-3 text-sm text-[var(--muted)]">
           Reference: <span className="font-semibold text-[var(--ink)]">{completedOrder.reference}</span> - {completedOrder.createdAt}
         </p>
+
+        <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-semibold">Votre commande est en attente de paiement.</p>
+          <p className="mt-1">Elle sera preparee des lors que le virement sera recu et valide.</p>
+        </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <article className="rounded-2xl border border-[var(--line)] bg-[var(--paper)]/70 p-4 text-sm text-[var(--muted)]">
@@ -542,80 +541,9 @@ export function CartPage() {
         {currentStep === "paiement" ? (
           <section className="rounded-3xl border border-[var(--line)] bg-white/90 p-5 sm:p-6">
             <h2 className="font-display text-3xl text-[var(--ink)]">Paiement</h2>
-            <p className="mt-2 text-sm text-[var(--muted)]">Saisie carte simplifiee visuelle + alternative virement.</p>
+            <p className="mt-2 text-sm text-[var(--muted)]">Paiement par virement bancaire uniquement.</p>
 
             <div className="mt-5 space-y-4">
-              <label className="rounded-2xl border-2 border-amber-300 bg-amber-50/70 p-4 shadow-sm shadow-amber-100">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === "card"}
-                      onChange={() => setPaymentMethod("card")}
-                      disabled
-                      className="mt-1"
-                    />
-                    <div className="space-y-1 text-sm text-[var(--muted)]">
-                      <p className="font-semibold text-[var(--ink)]">Paiement par carte</p>
-                      <p>Visa, Mastercard, Carte Bleue</p>
-                    </div>
-                  </div>
-                  <span className="rounded-full bg-amber-600 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white shadow-sm">
-                    Indisponible
-                  </span>
-                </div>
-
-                <div className="mt-4 rounded-2xl border border-amber-300 bg-white px-4 py-3 text-sm font-semibold text-amber-900 shadow-sm">
-                  Paiement par carte temporairement indisponible. Merci de choisir le virement bancaire pour confirmer la commande.
-                </div>
-
-                <div className="mt-4 rounded-2xl border border-[var(--line)] bg-white p-3 opacity-60">
-                  <div className="mb-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
-                    <span>Carte bancaire</span>
-                    <span>Visa / Mastercard</span>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <div className="relative">
-                      <CreditCard size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                      <input
-                        disabled
-                        placeholder="1234 1234 1234 1234"
-                        className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-10 pr-24 font-mono text-[13px] tracking-[0.12em] text-zinc-500 outline-none"
-                      />
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400">CB</span>
-                    </div>
-
-                    <input
-                      disabled
-                      placeholder="Nom sur la carte"
-                      className="h-11 rounded-lg border border-zinc-300 bg-zinc-100 px-3 text-[13px] text-zinc-500 outline-none"
-                    />
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="relative">
-                        <Calendar size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                        <input
-                          disabled
-                          placeholder="MM / AA"
-                          className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-9 pr-3 text-[13px] text-zinc-500 outline-none"
-                        />
-                      </div>
-
-                      <div className="relative">
-                        <Lock size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-                        <input
-                          disabled
-                          placeholder="CVC"
-                          className="h-11 w-full rounded-lg border border-zinc-300 bg-zinc-100 pl-9 pr-3 text-[13px] text-zinc-500 outline-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </label>
-
               <label className="cursor-pointer rounded-2xl border border-[var(--line)] bg-white p-4">
                 <div className="flex items-start gap-3">
                   <input

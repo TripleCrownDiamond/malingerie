@@ -71,6 +71,7 @@ function buildCompanyInfoHtml() {
       <p style="margin:2px 0;font-size:13px;">SIREN: ${escapeHtml(legalCompanyProfile.siren)} | SIRET: ${escapeHtml(legalCompanyProfile.siret)}</p>
       <p style="margin:2px 0;font-size:13px;">TVA: ${escapeHtml(legalCompanyProfile.vatNumber)}</p>
       <p style="margin:2px 0;font-size:13px;">Adresse: ${escapeHtml(legalCompanyProfile.headOffice)}</p>
+      <p style="margin:2px 0;font-size:13px;">Telephone: <a href="tel:${legalContact.phone?.replace(/\s/g, "")}" style="color:#e62e74;text-decoration:underline;">${escapeHtml(legalContact.phone ?? "")}</a></p>
       <p style="margin:2px 0;font-size:13px;">Contact: <a href="mailto:${escapeHtml(legalContact.email)}" style="color:#e62e74;text-decoration:underline;">${escapeHtml(legalContact.email)}</a></p>
     </div>
   `;
@@ -84,6 +85,7 @@ function buildCompanyInfoText() {
     `SIRET: ${legalCompanyProfile.siret}`,
     `TVA: ${legalCompanyProfile.vatNumber}`,
     `Adresse: ${legalCompanyProfile.headOffice}`,
+    `Telephone: ${legalContact.phone ?? ""}`,
     `Contact: ${legalContact.email}`,
   ].join("\n");
 }
@@ -111,6 +113,10 @@ function buildEmailPayload({
     `Bonjour ${customerName},`,
     "",
     `Merci pour votre commande ${reference}.`,
+    "",
+    "Votre commande est en attente de paiement.",
+    "Elle sera preparee des lors que le virement bancaire sera recu et valide.",
+    "",
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
     "",
@@ -129,6 +135,10 @@ function buildEmailPayload({
         <h2 style="margin:0 0 8px;color:#1a1a1a;">Merci pour votre commande</h2>
         <p style="margin:0 0 10px;">Bonjour ${safeCustomerName},</p>
         <p style="margin:0 0 10px;">Votre commande <strong>${safeReference}</strong> a bien ete enregistree.</p>
+        <div style="margin:0 0 14px;padding:12px;border:1px solid #f59e0b;border-radius:12px;background:#fffbeb;">
+          <p style="margin:0;font-size:14px;font-weight:600;color:#92400e;">Votre commande est en attente de paiement.</p>
+          <p style="margin:6px 0 0;font-size:13px;color:#92400e;">Elle sera preparee des lors que le virement bancaire sera recu et valide.</p>
+        </div>
         <p style="margin:0 0 14px;"><strong>Montant total:</strong> ${formatPrice(total)}</p>
         <p style="margin:0 0 14px;">
           Votre facture PDF est disponible ici:<br />
@@ -145,6 +155,7 @@ function buildEmailPayload({
     `Reference: ${reference}`,
     `Client: ${customerName}`,
     `Email client: ${to}`,
+    `Statut: En attente de paiement (virement bancaire)`,
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
     "",
@@ -161,6 +172,9 @@ function buildEmailPayload({
         <p style="margin:0 0 8px;"><strong>Reference:</strong> ${safeReference}</p>
         <p style="margin:0 0 8px;"><strong>Client:</strong> ${safeCustomerName}</p>
         <p style="margin:0 0 8px;"><strong>Email client:</strong> ${escapeHtml(to)}</p>
+        <div style="margin:0 0 12px;padding:10px;border:1px solid #f59e0b;border-radius:8px;background:#fffbeb;">
+          <p style="margin:0;font-size:13px;font-weight:600;color:#92400e;">Statut: En attente de paiement (virement bancaire)</p>
+        </div>
         <p style="margin:0 0 12px;"><strong>Montant total:</strong> ${formatPrice(total)}</p>
         <p style="margin:0 0 12px;">
           Facture PDF: <a href="${safeInvoiceUrl}" target="_blank" rel="noreferrer" style="color:#e62e74;text-decoration:underline;">${safeInvoiceUrl}</a>

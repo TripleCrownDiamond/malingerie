@@ -24,6 +24,7 @@ export const legalCompanyProfile = {
 
 export const legalContact = {
   email: "contact@ma-petite-lingerie.com",
+  phone: "+33 6 30 88 35 29",
   supportPage: "/nous-contacter",
 };
 
