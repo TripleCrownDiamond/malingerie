@@ -155,8 +155,17 @@ export function CartPage() {
     if (!customer.phone.trim()) {
       return "Le numero de telephone est obligatoire.";
     }
-    if (!customer.address.trim() || !customer.city.trim() || !customer.postalCode.trim()) {
-      return "Merci de completer les informations de livraison.";
+    if (customer.address.trim().length < 6) {
+      return "Merci de renseigner une adresse de livraison complete.";
+    }
+    if (!/\d/.test(customer.address)) {
+      return "L'adresse doit inclure un numero de voirie (ex: 12 rue des Fleurs).";
+    }
+    if (customer.city.trim().length < 2) {
+      return "Merci de renseigner la ville de livraison.";
+    }
+    if (!/^\d{5}$/.test(customer.postalCode.trim())) {
+      return "Merci de renseigner un code postal valide (5 chiffres).";
     }
 
     return null;
@@ -271,7 +280,7 @@ export function CartPage() {
 
         <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
           <p className="font-semibold">Votre commande est en attente de paiement.</p>
-          <p className="mt-1">Elle sera preparee des lors que le virement sera recu et valide.</p>
+          <p className="mt-1">Elle ne sera preparee et expediee qu&apos;apres reception du paiement par virement.</p>
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -541,7 +550,7 @@ export function CartPage() {
         {currentStep === "paiement" ? (
           <section className="rounded-3xl border border-[var(--line)] bg-white/90 p-5 sm:p-6">
             <h2 className="font-display text-3xl text-[var(--ink)]">Paiement</h2>
-            <p className="mt-2 text-sm text-[var(--muted)]">Paiement par virement bancaire uniquement.</p>
+            <p className="mt-2 text-sm text-[var(--muted)]">Paiement par virement bancaire.</p>
 
             <div className="mt-5 space-y-4">
               <label className="cursor-pointer rounded-2xl border border-[var(--line)] bg-white p-4">

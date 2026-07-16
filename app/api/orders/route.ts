@@ -11,9 +11,11 @@ const createOrderSchema = z.object({
     fullName: z.string().min(2),
     email: z.string().email(),
     phone: z.string().min(6),
-    address: z.string().min(4),
+    address: z.string().min(6).refine((value) => /\d/.test(value), {
+      message: "L'adresse doit inclure un numero de voirie",
+    }),
     city: z.string().min(2),
-    postalCode: z.string().min(2),
+    postalCode: z.string().regex(/^\d{5}$/, "Code postal invalide (5 chiffres)"),
   }),
   items: z
     .array(

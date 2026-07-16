@@ -9,6 +9,9 @@ type SendInvoiceEmailInput = {
   reference: string;
   invoiceUrl: string;
   total: number;
+  address: string;
+  postalCode: string;
+  city: string;
 };
 
 type EmailSendStatus = "sent" | "skipped" | "failed";
@@ -96,12 +99,16 @@ function buildEmailPayload({
   reference,
   invoiceUrl,
   total,
+  address,
+  postalCode,
+  city,
 }: SendInvoiceEmailInput): BuiltEmail {
   const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || legalCompanyProfile.website);
   const logoUrl = `${siteUrl}/api/images/email-logo`;
   const safeCustomerName = escapeHtml(customerName);
   const safeReference = escapeHtml(reference);
   const safeInvoiceUrl = escapeHtml(invoiceUrl);
+  const safeAddress = escapeHtml(`${address}, ${postalCode} ${city}, France`);
 
   const from =
     process.env.RESEND_FROM ||
@@ -116,6 +123,8 @@ function buildEmailPayload({
     "",
     "Votre commande est en attente de paiement.",
     "Elle sera preparee des lors que le virement bancaire sera recu et valide.",
+    "",
+    `Adresse de livraison: ${address}, ${postalCode} ${city}, France`,
     "",
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
@@ -135,6 +144,7 @@ function buildEmailPayload({
         <h2 style="margin:0 0 8px;color:#1a1a1a;">Merci pour votre commande</h2>
         <p style="margin:0 0 10px;">Bonjour ${safeCustomerName},</p>
         <p style="margin:0 0 10px;">Votre commande <strong>${safeReference}</strong> a bien ete enregistree.</p>
+        <p style="margin:0 0 10px;"><strong>Adresse de livraison:</strong> ${safeAddress}</p>
         <div style="margin:0 0 14px;padding:12px;border:1px solid #f59e0b;border-radius:12px;background:#fffbeb;">
           <p style="margin:0;font-size:14px;font-weight:600;color:#92400e;">Votre commande est en attente de paiement.</p>
           <p style="margin:6px 0 0;font-size:13px;color:#92400e;">Elle sera preparee des lors que le virement bancaire sera recu et valide.</p>
@@ -156,6 +166,7 @@ function buildEmailPayload({
     `Client: ${customerName}`,
     `Email client: ${to}`,
     `Statut: En attente de paiement (virement bancaire)`,
+    `Adresse de livraison: ${address}, ${postalCode} ${city}, France`,
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
     "",
@@ -172,6 +183,7 @@ function buildEmailPayload({
         <p style="margin:0 0 8px;"><strong>Reference:</strong> ${safeReference}</p>
         <p style="margin:0 0 8px;"><strong>Client:</strong> ${safeCustomerName}</p>
         <p style="margin:0 0 8px;"><strong>Email client:</strong> ${escapeHtml(to)}</p>
+        <p style="margin:0 0 8px;"><strong>Adresse de livraison:</strong> ${escapeHtml(`${address}, ${postalCode} ${city}, France`)}</p>
         <div style="margin:0 0 12px;padding:10px;border:1px solid #f59e0b;border-radius:8px;background:#fffbeb;">
           <p style="margin:0;font-size:13px;font-weight:600;color:#92400e;">Statut: En attente de paiement (virement bancaire)</p>
         </div>

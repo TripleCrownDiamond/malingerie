@@ -289,6 +289,9 @@ export async function createOrder(input: CreateOrderInput) {
       reference: order.reference,
       invoiceUrl,
       total: order.total,
+      address: order.customer.address,
+      postalCode: order.customer.postalCode,
+      city: order.customer.city,
     }),
     new Promise<SendInvoiceEmailResult>((resolve) => {
       setTimeout(() => resolve({ status: "failed", error: "EMAIL_TIMEOUT" }), 20000);
