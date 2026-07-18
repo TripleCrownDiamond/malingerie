@@ -553,20 +553,9 @@ export function CartPage() {
             <p className="mt-2 text-sm text-[var(--muted)]">Paiement par virement bancaire.</p>
 
             <div className="mt-5 space-y-4">
-              <label className="cursor-pointer rounded-2xl border border-[var(--line)] bg-white p-4">
-                <div className="flex items-start gap-3">
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentMethod === "bank_transfer"}
-                    onChange={() => setPaymentMethod("bank_transfer")}
-                    className="mt-1"
-                  />
-                  <div className="space-y-1 text-sm text-[var(--muted)]">
-                    <p className="font-semibold text-[var(--ink)]">Virement bancaire</p>
-                    <p>Votre commande est reservee pendant {bankConfig.paymentWindowHours}h le temps de recevoir le virement.</p>
-                  </div>
-                </div>
+              <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
+                <p className="text-sm font-semibold text-[var(--ink)]">Virement bancaire</p>
+                <p className="mt-1 text-sm text-[var(--muted)]">Votre commande est reservee pendant {bankConfig.paymentWindowHours}h le temps de recevoir le virement.</p>
 
                 <div className="mt-4 rounded-xl border border-[var(--line)] bg-[var(--accent-soft)]/30 p-3 text-sm text-[var(--ink)]">
                   <p className="font-semibold">Coordonnees de virement</p>
@@ -576,7 +565,7 @@ export function CartPage() {
                   <p>Banque: {bankConfig.bankName}</p>
                   <p className="mt-2 text-xs">{bankConfig.instructions}</p>
                 </div>
-              </label>
+              </div>
             </div>
           </section>
         ) : null}

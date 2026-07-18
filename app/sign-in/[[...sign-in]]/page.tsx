@@ -21,7 +21,6 @@ export default function SignInPage() {
         <div className="pointer-events-none absolute -left-20 top-10 h-56 w-56 rounded-full bg-[var(--accent)]/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-16 bottom-8 h-52 w-52 rounded-full bg-[var(--accent)]/15 blur-3xl" />
         <SignIn
-          signUpUrl="/sign-up"
           fallbackRedirectUrl="/admin"
           appearance={clerkAppearance}
         />

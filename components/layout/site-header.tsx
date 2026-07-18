@@ -1,6 +1,6 @@
 "use client";
 
-import { Show, UserButton } from "@clerk/nextjs";
+import { Show } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -113,7 +113,6 @@ function SiteHeaderContent() {
 
               <Show when="signed-in">
                 <div className="flex items-center gap-3" aria-label="Mon profil">
-                  <UserButton />
                   <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-800 transition hover:text-[var(--accent)]">
                     Dashboard
                   </Link>
@@ -236,7 +235,6 @@ function SiteHeaderContent() {
 
               <Show when="signed-in">
                 <div className="flex items-center gap-3" aria-label="Mon profil">
-                  <UserButton />
                   <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-800 transition hover:text-[var(--accent)]">
                     Dashboard
                   </Link>
