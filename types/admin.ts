@@ -13,6 +13,7 @@ export type BankTransferConfig = {
   referencePrefix: string;
   paymentWindowHours: number;
   instructions: string;
+  phone: string;
 };
 
 export type GoogleShoppingConfig = {

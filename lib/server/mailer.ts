@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { Resend } from "resend";
 
 import { legalCompanyProfile, legalContact } from "@/features/legal/data/legal-company";
+import { readBankTransferConfig } from "@/lib/server/config-store";
 
 type SendInvoiceEmailInput = {
   to: string;
@@ -66,7 +67,9 @@ function normalizeSiteUrl(value?: string) {
   return withProtocol.replace(/\/$/, "");
 }
 
-function buildCompanyInfoHtml() {
+async function buildCompanyInfoHtml() {
+  const bankConfig = await readBankTransferConfig();
+  const phone = bankConfig.phone || legalContact.phone;
   return `
     <div style="margin-top:20px;padding:14px;border:1px solid #f1d8e3;border-radius:12px;background:#fff8fb;">
       <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e62e74;">Informations entreprise</p>
@@ -74,13 +77,15 @@ function buildCompanyInfoHtml() {
       <p style="margin:2px 0;font-size:13px;">SIREN: ${escapeHtml(legalCompanyProfile.siren)} | SIRET: ${escapeHtml(legalCompanyProfile.siret)}</p>
       <p style="margin:2px 0;font-size:13px;">TVA: ${escapeHtml(legalCompanyProfile.vatNumber)}</p>
       <p style="margin:2px 0;font-size:13px;">Adresse: ${escapeHtml(legalCompanyProfile.headOffice)}</p>
-      <p style="margin:2px 0;font-size:13px;">Telephone: <a href="tel:${legalContact.phone?.replace(/\s/g, "")}" style="color:#e62e74;text-decoration:underline;">${escapeHtml(legalContact.phone ?? "")}</a></p>
+      <p style="margin:2px 0;font-size:13px;">Telephone: <a href="tel:${phone?.replace(/\s/g, "")}" style="color:#e62e74;text-decoration:underline;">${escapeHtml(phone ?? "")}</a></p>
       <p style="margin:2px 0;font-size:13px;">Contact: <a href="mailto:${escapeHtml(legalContact.email)}" style="color:#e62e74;text-decoration:underline;">${escapeHtml(legalContact.email)}</a></p>
     </div>
   `;
 }
 
-function buildCompanyInfoText() {
+async function buildCompanyInfoText() {
+  const bankConfig = await readBankTransferConfig();
+  const phone = bankConfig.phone || legalContact.phone;
   return [
     "Informations entreprise:",
     `${legalCompanyProfile.legalName} - ${legalCompanyProfile.legalForm}`,
@@ -88,12 +93,12 @@ function buildCompanyInfoText() {
     `SIRET: ${legalCompanyProfile.siret}`,
     `TVA: ${legalCompanyProfile.vatNumber}`,
     `Adresse: ${legalCompanyProfile.headOffice}`,
-    `Telephone: ${legalContact.phone ?? ""}`,
+    `Telephone: ${phone ?? ""}`,
     `Contact: ${legalContact.email}`,
   ].join("\n");
 }
 
-function buildEmailPayload({
+async function buildEmailPayload({
   to,
   customerName,
   reference,
@@ -116,6 +121,9 @@ function buildEmailPayload({
     "Ma Petite Lingerie <no-reply@ma-petite-lingerie.com>";
 
   const customerSubject = `Votre facture ${reference} - Ma Petite Lingerie`;
+  const companyInfoHtml = await buildCompanyInfoHtml();
+  const companyInfoText = await buildCompanyInfoText();
+
   const customerText = [
     `Bonjour ${customerName},`,
     "",
@@ -129,7 +137,7 @@ function buildEmailPayload({
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
     "",
-    buildCompanyInfoText(),
+    companyInfoText,
     "",
     "A bientot,",
     "Ma Petite Lingerie",
@@ -154,7 +162,7 @@ function buildEmailPayload({
           Votre facture PDF est disponible ici:<br />
           <a href="${safeInvoiceUrl}" target="_blank" rel="noreferrer" style="color:#e62e74;text-decoration:underline;">${safeInvoiceUrl}</a>
         </p>
-        ${buildCompanyInfoHtml()}
+        ${companyInfoHtml}
       </div>
     </div>
   `;
@@ -170,7 +178,7 @@ function buildEmailPayload({
     `Montant total: ${formatPrice(total)}`,
     `Facture PDF: ${invoiceUrl}`,
     "",
-    buildCompanyInfoText(),
+    companyInfoText,
   ].join("\n");
 
   const adminHtml = `
@@ -191,7 +199,7 @@ function buildEmailPayload({
         <p style="margin:0 0 12px;">
           Facture PDF: <a href="${safeInvoiceUrl}" target="_blank" rel="noreferrer" style="color:#e62e74;text-decoration:underline;">${safeInvoiceUrl}</a>
         </p>
-        ${buildCompanyInfoHtml()}
+        ${companyInfoHtml}
       </div>
     </div>
   `;
@@ -227,7 +235,7 @@ async function sendViaResend({
     };
   }
 
-  const email = buildEmailPayload(input);
+  const email = await buildEmailPayload(input);
   const resend = new Resend(resendApiKey);
 
   try {
@@ -315,7 +323,7 @@ async function sendViaSmtp({
     };
   }
 
-  const email = buildEmailPayload(input);
+  const email = await buildEmailPayload(input);
 
   const transport = nodemailer.createTransport({
     host,

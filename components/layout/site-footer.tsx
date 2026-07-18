@@ -3,6 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+type BankTransferConfig = {
+  phone: string;
+};
 
 const shopLinks = [
   { label: "Lingerie", href: "/lingerie" },
@@ -50,6 +55,20 @@ function footerLinkClass(isActive: boolean) {
 
 export function SiteFooter() {
   const pathname = usePathname();
+  const [phone, setPhone] = useState("+33 6 30 88 35 29");
+
+  useEffect(() => {
+    fetch("/api/payment/bank-transfer", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (data?.config?.phone) {
+          setPhone(data.config.phone);
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
+  const phoneLink = `tel:${phone.replace(/\s/g, "")}`;
 
   return (
     <footer className="relative bg-[var(--rose-nude)] px-8 pb-16 pt-24 lg:pt-32" id="conseils">
@@ -85,7 +104,7 @@ export function SiteFooter() {
               >
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
-              <a href="tel:+33630883529" className="hover:text-[var(--accent)]">+33 6 30 88 35 29</a>
+              <a href={phoneLink} className="hover:text-[var(--accent)]">{phone}</a>
             </div>
           </div>
 

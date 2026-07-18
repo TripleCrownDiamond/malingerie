@@ -110,6 +110,7 @@ const defaultBankConfig: BankTransferConfig = {
   referencePrefix: "MPL",
   paymentWindowHours: 72,
   instructions: "Indiquez la reference de commande dans le motif de virement.",
+  phone: "+33 6 30 88 35 29",
 };
 
 const defaultGoogleConfig: GoogleShoppingConfig = {
@@ -1043,6 +1044,7 @@ export function AdminDashboard() {
               <label className="space-y-2 text-sm text-[var(--muted)]"><span>BIC</span><input value={bankConfig.bic} onChange={(event) => setBankConfig((prev) => ({ ...prev, bic: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
               <label className="space-y-2 text-sm text-[var(--muted)]"><span>Banque</span><input value={bankConfig.bankName} onChange={(event) => setBankConfig((prev) => ({ ...prev, bankName: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
               <label className="space-y-2 text-sm text-[var(--muted)]"><span>Prefixe reference</span><input value={bankConfig.referencePrefix} onChange={(event) => setBankConfig((prev) => ({ ...prev, referencePrefix: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
+              <label className="space-y-2 text-sm text-[var(--muted)]"><span>Telephone</span><input value={bankConfig.phone} onChange={(event) => setBankConfig((prev) => ({ ...prev, phone: event.target.value }))} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
               <label className="space-y-2 text-sm text-[var(--muted)] sm:col-span-2"><span>Instructions</span><textarea value={bankConfig.instructions} onChange={(event) => setBankConfig((prev) => ({ ...prev, instructions: event.target.value }))} rows={3} className="w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--accent)]" /></label>
               <div className="sm:col-span-2"><button type="submit" disabled={isSavingBankConfig} className="rounded-full bg-[var(--ink)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--paper)] disabled:cursor-not-allowed disabled:opacity-70">{isSavingBankConfig ? "Sauvegarde..." : "Sauvegarder virement"}</button></div>
             </form>

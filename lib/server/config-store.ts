@@ -56,6 +56,7 @@ const defaultBankTransferConfig: BankTransferConfig = {
   referencePrefix: "MPL",
   paymentWindowHours: 72,
   instructions: "",
+  phone: "+33 6 30 88 35 29",
 };
 
 const defaultGoogleShoppingConfig: GoogleShoppingConfig = {

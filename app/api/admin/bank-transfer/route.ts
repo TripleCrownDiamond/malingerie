@@ -13,6 +13,7 @@ const bankTransferSchema = z.object({
   referencePrefix: z.string().min(2),
   paymentWindowHours: z.coerce.number().int().positive(),
   instructions: z.string().min(4),
+  phone: z.string().min(6),
 });
 
 async function requireAdmin() {

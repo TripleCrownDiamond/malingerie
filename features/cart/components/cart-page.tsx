@@ -75,6 +75,7 @@ const defaultBankConfig: BankTransferConfig = {
   referencePrefix: "MPL",
   paymentWindowHours: 72,
   instructions: "Indiquez la reference de commande dans le motif de virement.",
+  phone: "+33 6 30 88 35 29",
 };
 
 function formatPrice(value: number) {
