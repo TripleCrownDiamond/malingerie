@@ -107,7 +107,7 @@ async function buildEmailPayload({
   address,
   postalCode,
   city,
-}: SendInvoiceEmailInput): BuiltEmail {
+}: SendInvoiceEmailInput): Promise<BuiltEmail> {
   const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || legalCompanyProfile.website);
   const logoUrl = `${siteUrl}/api/images/email-logo`;
   const safeCustomerName = escapeHtml(customerName);
