@@ -33,6 +33,9 @@ export async function POST(request: Request) {
     reference: `TEST-${Date.now()}`,
     invoiceUrl: `${new URL(request.url).origin}/mentions-legales`,
     total: 1,
+    address: "1 Rue de la Paix",
+    postalCode: "75002",
+    city: "Paris",
   });
 
   return NextResponse.json({ ok: result.status === "sent", to, result });
