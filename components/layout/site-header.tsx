@@ -227,20 +227,6 @@ function SiteHeaderContent() {
                 </span>
               </Link>
 
-              <Show when="signed-out">
-                <Link href="/sign-in" className="text-gray-800 transition hover:text-[var(--accent)]" aria-label="Connexion">
-                  <User size={22} />
-                </Link>
-              </Show>
-
-              <Show when="signed-in">
-                <div className="flex items-center gap-3" aria-label="Mon profil">
-                  <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-800 transition hover:text-[var(--accent)]">
-                    Dashboard
-                  </Link>
-                </div>
-              </Show>
-
               <button
                 type="button"
                 onClick={openDrawer}
@@ -317,14 +303,6 @@ function SiteHeaderContent() {
               <Link href="/panier" onClick={() => setMobileOpen(false)}>
                 Checkout
               </Link>
-
-
-
-              <Show when="signed-in">
-                <Link href="/admin" onClick={() => setMobileOpen(false)}>
-                  Dashboard
-                </Link>
-              </Show>
             </div>
           </div>
         ) : null}
