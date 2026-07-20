@@ -318,11 +318,7 @@ function SiteHeaderContent() {
                 Checkout
               </Link>
 
-              <Show when="signed-out">
-                <Link href="/sign-in" onClick={() => setMobileOpen(false)}>
-                  Connexion
-                </Link>
-              </Show>
+
 
               <Show when="signed-in">
                 <Link href="/admin" onClick={() => setMobileOpen(false)}>
