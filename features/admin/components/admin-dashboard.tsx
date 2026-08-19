@@ -419,6 +419,11 @@ export function AdminDashboard() {
     setProductStatus("Enregistrement du produit...");
 
     try {
+      if (!draft.image) {
+        setProductStatus("Erreur: Veuillez d'abord uploader une image principale.");
+        return;
+      }
+
       const payload = {
         id: editingProductId ?? undefined,
         name: draft.name,
@@ -461,6 +466,8 @@ export function AdminDashboard() {
       setProductCategoryInput("all");
       setProductLimitInput("25");
       setProductsRequest({ page: 1, query: "", category: "all", limit: 25 });
+    } catch (error) {
+      setProductStatus(`Erreur: ${error instanceof Error ? error.message : "Une erreur inattendue s'est produite."}`);
     } finally {
       setIsSubmittingProduct(false);
     }
@@ -723,6 +730,8 @@ export function AdminDashboard() {
             </div>
           </div>
 
+          {productStatus ? <p className="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--accent)]">{productStatus}</p> : null}
+
           {productPanel === "list" ? (
             <div className="mt-6 space-y-5">
               <form onSubmit={submitProductFilters} className="grid gap-3 md:grid-cols-[1fr_240px_160px_auto]">
@@ -871,7 +880,6 @@ export function AdminDashboard() {
                   </button>
                 ) : null}
               </div>
-              {productStatus ? <p className="mb-4 text-xs uppercase tracking-[0.16em] text-[var(--accent)]">{productStatus}</p> : null}
 
               <form onSubmit={submitProduct} className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-sm text-[var(--muted)]">
