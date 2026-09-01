@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -31,6 +32,16 @@ export default function RootLayout({
 
   return (
     <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        {/* Google tag (gtag.js) */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-18398548856" />
+        <Script id="gtag-init" dangerouslySetInnerHTML={{ __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-18398548856');
+        ` }} />
+      </head>
       <body className="min-h-full bg-[var(--paper)] text-[var(--ink)]" suppressHydrationWarning>
         <ClerkProvider appearance={clerkAppearance}>
           <div className="min-h-screen">
